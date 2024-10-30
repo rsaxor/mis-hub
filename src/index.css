@@ -11,3 +11,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.App {
+  padding: 1.5em;
+}
+.main-nav {
+  display: block;
+  margin-bottom: 15px;
+}
+table thead tr th {
+  line-height: 1;
+}
+.main-nav * {
+  display: inline-block;
+  margin-right: 10px;
+}
