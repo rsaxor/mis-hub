@@ -6,20 +6,25 @@ const EstimatesTable = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
     const apiUrl = process.env.REACT_APP_API_ESTIMATE;
+    const apiKey = process.env.REACT_APP_API_KEY;
+    const apiValue = process.env.REACT_APP_API_VALUE;
 
     useEffect(() => {
         const fetchEstimates = async () => {
             const allEstimates = [];
             for (let i = 1; i <= 5; i++) {
                 try {
-                    const response = await axios.get(
-                        `${apiUrl}/1/1/null/${i}/50/All/All/All/1/null/null/null`,
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            }
-                        }
-                    );
+                    const config = {
+                        method: 'get',
+                        url: `${apiUrl}/1/1/null/${i}/50/All/All/All/1/null/null/null`,
+                        headers: {
+                            'Content-Type': 'application/json', 
+                            [apiKey]: apiValue
+                        },
+                        maxBodyLength: Infinity
+                    };
+
+                    const response = await axios.request(config);
 
                     const validEstimates = response.data.filter(
                         (estimates) => estimates.EstimateName && estimates.EstimateName.trim() !== ""

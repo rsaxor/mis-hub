@@ -6,22 +6,28 @@ const CustomerTable = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
     const apiUrl = process.env.REACT_APP_API_CUSTOMER;
+    const apiKey = process.env.REACT_APP_API_KEY;
+    const apiValue = process.env.REACT_APP_API_VALUE;
+
 
     useEffect(() => {
         const fetchCustomers = async () => {
             const allCustomers = [];
+            console.log(apiKey, apiValue);
 
-            for (let i = 1; i <= 10; i++) { // 836
+            for (let i = 1; i <= 3; i++) { // 836
                 try {
-                    const response = await axios.get(
-                        `${apiUrl}/1/1/1/null/${i}/50/1/false`,
-                        //
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            }
-                        }
-                    );
+                    const config = {
+                        method: 'get',
+                        url: `${apiUrl}/1/1/1/null/${i}/50/1/false`,
+                        headers: {
+                            'Content-Type': 'application/json', 
+                            [apiKey]: apiValue
+                        },
+                        maxBodyLength: Infinity
+                    };
+
+                    const response = await axios.request(config);
 
                     const validCustomers = response.data.filter(
                         (customer) => customer.Email && customer.Email.trim() !== ""
@@ -34,11 +40,14 @@ const CustomerTable = () => {
                     console.error("Error fetching customer data:", error);
                 }
             }
+
             setCustomers(allCustomers);
         };
 
         fetchCustomers();
-    }, []);
+
+    }, [apiUrl, apiKey, apiValue]);
+
 
     // Calculate total pages
     const totalPages = Math.ceil(customers.length / itemsPerPage);

@@ -6,20 +6,25 @@ const PurchasesTable = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
     const apiUrl = process.env.REACT_APP_API_PURCHASE;
+    const apiKey = process.env.REACT_APP_API_KEY;
+    const apiValue = process.env.REACT_APP_API_VALUE;
 
     useEffect(() => {
         const fetchPurchases = async () => {
             const allPurchases = [];
             for (let i = 1; i <= 3; i++) {
                 try {
-                    const response = await axios.get( // this endpoint is only a 1 pager
-                        `${apiUrl}/0/1/null/${i}/50/PO/1/null/null/null`,
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            }
-                        }
-                    );
+                    const config = {
+                        method: 'get',
+                        url: `${apiUrl}/0/1/null/${i}/50/PO/1/null/null/null`,
+                        headers: {
+                            'Content-Type': 'application/json', 
+                            [apiKey]: apiValue
+                        },
+                        maxBodyLength: Infinity
+                    };
+
+                    const response = await axios.request(config);
 
                     const validPurchases = response.data.filter(
                         (purchases) => purchases.SupplierName && purchases.SupplierName.trim() !== ""

@@ -6,20 +6,25 @@ const JobsTable = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
     const apiUrl = process.env.REACT_APP_API_JOBS;
+    const apiKey = process.env.REACT_APP_API_KEY;
+    const apiValue = process.env.REACT_APP_API_VALUE;
 
     useEffect(() => {
         const fetchJobs = async () => {
             const allJobs = [];
             for (let i = 1; i <= 5; i++) {
                 try {
-                    const response = await axios.get(
-                        `${apiUrl}/1/1/false/JobCode/null/${i}/50/1/null/All/false/null/false/null/null/null`,
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            }
-                        }
-                    );
+                    const config = {
+                        method: 'get',
+                        url: `${apiUrl}/1/1/false/JobCode/null/${i}/50/1/null/All/false/null/false/null/null/null`,
+                        headers: {
+                            'Content-Type': 'application/json', 
+                            [apiKey]: apiValue
+                        },
+                        maxBodyLength: Infinity
+                    };
+
+                    const response = await axios.request(config);
 
                     const validJobs = response.data.filter(
                         (jobs) => jobs.EstCode && jobs.EstCode.trim() !== ""

@@ -6,21 +6,25 @@ const InvoiceTable = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
     const apiUrl = process.env.REACT_APP_API_INVOICE;
+    const apiKey = process.env.REACT_APP_API_KEY;
+    const apiValue = process.env.REACT_APP_API_VALUE;
 
     useEffect(() => {
         const fetchInvoice = async () => {
             const allInvoice = [];
             for (let i = 1; i <= 5; i++) {
                 try {
-                    const response = await axios.get(
-                        `${apiUrl}/0/1/null/null/null/${i}/Invoice/1/null/null/null`,
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Access-Control-Allow-Origin': '*',
-                            }
-                        }
-                    );
+                    const config = {
+                        method: 'get',
+                        url: `${apiUrl}/0/1/null/null/null/${i}/Invoice/1/null/null/null`,
+                        headers: {
+                            'Content-Type': 'application/json', 
+                            [apiKey]: apiValue
+                        },
+                        maxBodyLength: Infinity
+                    };
+
+                    const response = await axios.request(config);
 
                     const validInvoice = response.data.filter(
                         (invoices) => invoices.EstName && invoices.EstName.trim() !== ""

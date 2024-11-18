@@ -6,21 +6,25 @@ const InventoryTable = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
     const apiUrl = process.env.REACT_APP_API_INVENTORY;
+    const apiKey = process.env.REACT_APP_API_KEY;
+    const apiValue = process.env.REACT_APP_API_VALUE;
 
     useEffect(() => {
         const fetchInventory = async () => {
             const allInventory = [];
             for (let i = 1; i <= 1; i++) {
                 try {
-                    const response = await axios.get(
-                        `${apiUrl}?CatId=0&SubCatId=0&BrandId=-1`,
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Access-Control-Allow-Origin': '*',
-                            }
-                        }
-                    );
+                    const config = {
+                        method: 'get',
+                        url: `${apiUrl}?CatId=0&SubCatId=0&BrandId=-1`,
+                        headers: {
+                            'Content-Type': 'application/json', 
+                            [apiKey]: apiValue
+                        },
+                        maxBodyLength: Infinity
+                    };
+
+                    const response = await axios.request(config);
 
                     const validInventory = response.data.filter(
                         (inventory) => inventory.ItemName && inventory.ItemName.trim() !== ""
