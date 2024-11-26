@@ -41,7 +41,7 @@ const ShipmentTable = () => {
         };
 
         fetchShipment();
-    }, []);
+    }, [apiUrl, apiKey, apiValue]);
 
     // Calculate total pages
     const totalPages = Math.ceil(shipments.length / itemsPerPage);

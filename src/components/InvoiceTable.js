@@ -41,7 +41,7 @@ const InvoiceTable = () => {
         };
 
         fetchInvoice();
-    }, []);
+    }, [apiUrl, apiKey, apiValue]);
 
     // Calculate total pages
     const totalPages = Math.ceil(invoices.length / itemsPerPage);

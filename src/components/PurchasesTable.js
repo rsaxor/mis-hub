@@ -41,7 +41,7 @@ const PurchasesTable = () => {
         };
 
         fetchPurchases();
-    }, []);
+    }, [apiUrl, apiKey, apiValue]);
 
     // Calculate total pages
     const totalPages = Math.ceil(purchases.length / itemsPerPage);

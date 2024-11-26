@@ -41,7 +41,7 @@ const EstimatesTable = () => {
         };
 
         fetchEstimates();
-    }, []);
+    }, [apiUrl, apiKey, apiValue]);
 
     // Calculate total pages
     const totalPages = Math.ceil(estimates.length / itemsPerPage);

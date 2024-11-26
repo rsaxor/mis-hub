@@ -41,7 +41,7 @@ const InventoryTable = () => {
         };
 
         fetchInventory();
-    }, []);
+    }, [apiUrl, apiKey, apiValue]);
 
     // Calculate total pages
     const totalPages = Math.ceil(inventory.length / itemsPerPage);

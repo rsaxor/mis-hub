@@ -41,7 +41,7 @@ const JobsTable = () => {
         };
 
         fetchJobs();
-    }, []);
+    }, [apiUrl, apiKey, apiValue]);
 
     // Calculate total pages
     const totalPages = Math.ceil(jobs.length / itemsPerPage);
