@@ -1,45 +1,44 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useParams } from 'react-router-dom';
+
 import Search from "./ui/Search";
 
-const CustomerTable = () => {
+const CustomerSearch = () => {
     const [customers, setCustomers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
     const apiUrl = process.env.REACT_APP_API_CUSTOMER;
     const apiKey = process.env.REACT_APP_API_KEY;
     const apiValue = process.env.REACT_APP_API_VALUE;
-
+    const { searchKeyword } = useParams();
 
     useEffect(() => {
         const fetchCustomers = async () => {
             const allCustomers = [];
-            console.log(apiKey, apiValue);
 
-            for (let i = 1; i <= 3; i++) { // 836
-                try {
-                    const config = {
-                        method: 'get',
-                        url: `${apiUrl}/1/1/1/null/${i}/50/1/false`,
-                        headers: {
-                            'Content-Type': 'application/json', 
-                            [apiKey]: apiValue
-                        },
-                        maxBodyLength: Infinity
-                    };
+            try {
+                const config = {
+                    method: 'get',
+                    url: `${apiUrl}/1/1/1/${searchKeyword}/1/25/1/false`,
+                    headers: {
+                        'Content-Type': 'application/json', 
+                        [apiKey]: apiValue
+                    },
+                    maxBodyLength: Infinity
+                };
 
-                    const response = await axios.request(config);
+                const response = await axios.request(config);
 
-                    const validCustomers = response.data.filter(
-                        (customer) => customer.Email && customer.Email.trim() !== ""
-                    );
+                const validCustomers = response.data.filter(
+                    (customer) => customer.Email && customer.Email.trim() !== ""
+                );
 
-                    allCustomers.push(...validCustomers);
+                allCustomers.push(...validCustomers);
 
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                } catch (error) {
-                    console.error("Error fetching customer data:", error);
-                }
+                await new Promise(resolve => setTimeout(resolve, 100));
+            } catch (error) {
+                console.error("Error fetching customer data:", error);
             }
 
             setCustomers(allCustomers);
@@ -47,7 +46,7 @@ const CustomerTable = () => {
 
         fetchCustomers();
 
-    }, [apiUrl, apiKey, apiValue]);
+    }, [searchKeyword, apiUrl, apiKey, apiValue]);
 
 
     // Calculate total pages
@@ -64,9 +63,9 @@ const CustomerTable = () => {
     };
 
     // Get all unique keys from the customer data
-    const allKeys = customers.length
-        ? Object.keys(customers[0])
-        : [];
+    // const allKeys = customers.length
+    //     ? Object.keys(customers[0])
+    //     : [];
 
     return (
         <div>
@@ -98,7 +97,17 @@ const CustomerTable = () => {
                     </div>
                 </div>
             </div>
-            <table className="table">
+            <div>
+                
+                {currentItems.map((customer, index) => (
+                    <div key={index}>
+                        <h3 className="">{customer.AccountNumber} <a className="btn btn-primary d-inline-block mx-2" href={`/mis-customer-history/${customer.CustomerID}`}>History</a></h3>
+                        <p className="">{customer.CustomerName}</p>
+                    </div>
+                    ))
+                }
+            </div>
+            {/* <table className="table">
                 <thead>
                     <tr>
                         {allKeys.map((key, index) => (
@@ -113,7 +122,7 @@ const CustomerTable = () => {
                         currentItems.map((customer, index) => (
                             <tr key={index}>
                                 {allKeys.map((key, keyIndex) => (
-                                    <td key={keyIndex}>{customer[key] ? customer[key] : `---`}</td>
+                                    <td key={keyIndex}>{customer[key]}</td>
                                 ))}
                             </tr>
                         ))
@@ -125,7 +134,7 @@ const CustomerTable = () => {
                         </tr>
                     )}
                 </tbody>
-            </table>
+            </table> */}
             <div className="pagination justify-content-end">
                 <button
                     className="btn btn-primary btn-sm"
@@ -149,4 +158,4 @@ const CustomerTable = () => {
     );
 };
 
-export default CustomerTable;
+export default CustomerSearch;
