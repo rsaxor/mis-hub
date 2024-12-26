@@ -5,62 +5,61 @@ import Search from "./ui/Search";
 const CustomerTable = () => {
     const [customers, setCustomers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 50;
+    const [totalPages, setTotalPages] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const itemsPerPage = 25;
     const apiUrl = process.env.REACT_APP_API_CUSTOMER;
     const apiKey = process.env.REACT_APP_API_KEY;
     const apiValue = process.env.REACT_APP_API_VALUE;
 
-
     useEffect(() => {
         const fetchCustomers = async () => {
-            const allCustomers = [];
-            console.log(apiKey, apiValue);
+            setLoading(true);
 
-            for (let i = 1; i <= 3; i++) { // 836
-                try {
-                    const config = {
-                        method: 'get',
-                        url: `${apiUrl}/1/1/1/null/${i}/50/1/false`,
-                        headers: {
-                            'Content-Type': 'application/json', 
-                            [apiKey]: apiValue
-                        },
-                        maxBodyLength: Infinity
-                    };
+            try {
+                const config = {
+                    method: 'get',
+                    url: `${apiUrl}/1/1/1/null/${currentPage}/${itemsPerPage}/1/false`,
+                    headers: {
+                        'Content-Type': 'application/json', 
+                        [apiKey]: apiValue
+                    },
+                    maxBodyLength: Infinity
+                };
 
-                    const response = await axios.request(config);
+                const response = await axios.request(config);
 
-                    const validCustomers = response.data.filter(
-                        (customer) => customer.Email && customer.Email.trim() !== ""
-                    );
+                const validCustomers = response.data.filter(
+                    (customer) => customer
+                );
 
-                    allCustomers.push(...validCustomers);
+                const totalCount = validCustomers[0]?.TotalCount || 0;
+                setTotalPages(Math.ceil(totalCount / itemsPerPage));
 
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                } catch (error) {
-                    console.error("Error fetching customer data:", error);
-                }
+                setCustomers(validCustomers);
+            } catch (error) {
+                console.error("Error fetching customer data:", error);
+            } finally {
+                setTimeout(() => {
+                    setLoading(false); 
+                }, 100);
             }
-
-            setCustomers(allCustomers);
         };
 
         fetchCustomers();
 
-    }, [apiUrl, apiKey, apiValue]);
+    }, [currentPage, apiUrl, apiKey, apiValue]);
 
+    const handlePrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage((prevPage) => prevPage - 1);
+        }
+    };
 
-    // Calculate total pages
-    const totalPages = Math.ceil(customers.length / itemsPerPage);
-
-    // Get current page's items
-    const currentItems = customers.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
+    const handleNext = () => {
+        if (!totalPages || currentPage < totalPages) {
+            setCurrentPage((prevPage) => prevPage + 1);
+        }
     };
 
     // Get all unique keys from the customer data
@@ -79,18 +78,18 @@ const CustomerTable = () => {
                         <div className="pagination mb-3 justify-content-end">
                             <button
                                 className="btn btn-primary btn-sm"
-                                onClick={() => handlePageChange(currentPage - 1)}
+                                onClick={handlePrevious}
                                 disabled={currentPage === 1}
                             >
                                 Previous
                             </button>
                             <span className="mx-3 inline-block">
-                                Page {currentPage} of {totalPages ? totalPages : "..."}
+                                Page {currentPage} of {totalPages || "..."}
                             </span>
                             <button
                                 className="btn btn-primary btn-sm"
-                                onClick={() => handlePageChange(currentPage + 1)}
-                                disabled={currentPage === totalPages}
+                                onClick={handleNext}
+                                disabled={totalPages && currentPage === totalPages}
                             >
                                 Next
                             </button>
@@ -109,8 +108,14 @@ const CustomerTable = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {currentItems.length > 0 ? (
-                        currentItems.map((customer, index) => (
+                    {loading ? (
+                        <tr>
+                            <td colSpan={allKeys.length || 1} align="center">
+                                Loading . . .
+                            </td>
+                        </tr>
+                    ) : customers.length > 0 ? (
+                        customers.map((customer, index) => (
                             <tr key={index}>
                                 {allKeys.map((key, keyIndex) => (
                                     <td key={keyIndex}>{customer[key] ? customer[key] : `---`}</td>
@@ -119,8 +124,8 @@ const CustomerTable = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={allKeys.length} align="center">
-                                Loading . . .
+                            <td colSpan={allKeys.length || 1} align="center">
+                                No data available.
                             </td>
                         </tr>
                     )}
@@ -129,18 +134,18 @@ const CustomerTable = () => {
             <div className="pagination justify-content-end">
                 <button
                     className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
+                    onClick={handlePrevious}
                     disabled={currentPage === 1}
                 >
                     Previous
                 </button>
                 <span className="mx-3 inline-block">
-                    Page {currentPage} of {totalPages ? totalPages : "..."}
+                    Page {currentPage} of {totalPages || "..."}
                 </span>
                 <button
                     className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
+                    onClick={handleNext}
+                    disabled={totalPages && currentPage === totalPages}
                 >
                     Next
                 </button>
