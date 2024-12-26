@@ -11,6 +11,7 @@ const CustomerTable = () => {
     const apiUrl = process.env.REACT_APP_API_CUSTOMER;
     const apiKey = process.env.REACT_APP_API_KEY;
     const apiValue = process.env.REACT_APP_API_VALUE;
+    const keysToDisplay = ["Row", "AccountNumber", "CustomerName", "Email", "Tel1", "Contact", "Type" ];
 
     useEffect(() => {
         const fetchCustomers = async () => {
@@ -63,9 +64,9 @@ const CustomerTable = () => {
     };
 
     // Get all unique keys from the customer data
-    const allKeys = customers.length
-        ? Object.keys(customers[0])
-        : [];
+    // const allKeys = customers.length
+    //     ? Object.keys(customers[0])
+    //     : [];
 
     return (
         <div>
@@ -77,7 +78,7 @@ const CustomerTable = () => {
                     <div className="col-3">
                         <div className="pagination mb-3 justify-content-end">
                             <button
-                                className="btn btn-primary btn-sm"
+                                className="btn btn-secondary btn-sm"
                                 onClick={handlePrevious}
                                 disabled={currentPage === 1}
                             >
@@ -87,7 +88,7 @@ const CustomerTable = () => {
                                 Page {currentPage} of {totalPages || "..."}
                             </span>
                             <button
-                                className="btn btn-primary btn-sm"
+                                className="btn btn-secondary btn-sm"
                                 onClick={handleNext}
                                 disabled={totalPages && currentPage === totalPages}
                             >
@@ -100,31 +101,33 @@ const CustomerTable = () => {
             <table className="table">
                 <thead>
                     <tr>
-                        {allKeys.map((key, index) => (
+                        {keysToDisplay.map((key, index) => (
                             <th key={index} align="left" scope="col">
                                 {key}
                             </th>
                         ))}
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {loading ? (
                         <tr>
-                            <td colSpan={allKeys.length || 1} align="center">
+                            <td colSpan={keysToDisplay.length || 1} align="center">
                                 Loading . . .
                             </td>
                         </tr>
                     ) : customers.length > 0 ? (
                         customers.map((customer, index) => (
                             <tr key={index}>
-                                {allKeys.map((key, keyIndex) => (
+                                {keysToDisplay.map((key, keyIndex) => (
                                     <td key={keyIndex}>{customer[key] ? customer[key] : `---`}</td>
                                 ))}
+                                <td><a className="btn btn-dark btn-sm" href="#">View</a></td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={allKeys.length || 1} align="center">
+                            <td colSpan={keysToDisplay.length || 1} align="center">
                                 No data available.
                             </td>
                         </tr>
@@ -133,7 +136,7 @@ const CustomerTable = () => {
             </table>
             <div className="pagination justify-content-end">
                 <button
-                    className="btn btn-primary btn-sm"
+                    className="btn btn-secondary btn-sm"
                     onClick={handlePrevious}
                     disabled={currentPage === 1}
                 >
@@ -143,7 +146,7 @@ const CustomerTable = () => {
                     Page {currentPage} of {totalPages || "..."}
                 </span>
                 <button
-                    className="btn btn-primary btn-sm"
+                    className="btn btn-secondary btn-sm"
                     onClick={handleNext}
                     disabled={totalPages && currentPage === totalPages}
                 >
