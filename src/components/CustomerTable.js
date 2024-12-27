@@ -112,7 +112,7 @@ const CustomerTable = () => {
                 <tbody>
                     {loading ? (
                         <tr>
-                            <td colSpan={keysToDisplay.length || 1} align="center">
+                            <td colSpan={keysToDisplay.length + 1 || 1} align="center">
                                 Loading . . .
                             </td>
                         </tr>
@@ -122,7 +122,7 @@ const CustomerTable = () => {
                                 {keysToDisplay.map((key, keyIndex) => (
                                     <td key={keyIndex}>{customer[key] ? customer[key] : `---`}</td>
                                 ))}
-                                <td><a className="btn btn-dark btn-sm" href="#">View</a></td>
+                                <td><a className="btn btn-dark btn-sm" href={`/mis-customer-view/${customer.CustomerID}`}>View</a></td>
                             </tr>
                         ))
                     ) : (
