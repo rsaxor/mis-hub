@@ -31,7 +31,7 @@ const CustomerSearch = () => {
                 const response = await axios.request(config);
 
                 const validCustomers = response.data.filter(
-                    (customer) => customer.Email && customer.Email.trim() !== ""
+                    (customer) => customer
                 );
 
                 allCustomers.push(...validCustomers);
@@ -97,15 +97,21 @@ const CustomerSearch = () => {
                     </div>
                 </div>
             </div>
-            <div>
-                
-                {currentItems.map((customer, index) => (
-                    <div key={index}>
-                        <h3 className="">{customer.AccountNumber} <a className="btn btn-primary d-inline-block mx-2" href={`/mis-customer-history/${customer.CustomerID}`}>History</a></h3>
-                        <p className="">{customer.CustomerName}</p>
-                    </div>
-                    ))
-                }
+            <div className="container-fluid">
+                <div className="row">
+                    {currentItems.map((customer, index) => (
+                        <div className="col-6" key={index}>
+                            <div className="card mb-4">
+                                <div className="card-body">
+                                    <h3 className="card-title"><b>{customer.AccountNumber}</b></h3>
+                                    <p className="">{customer.CustomerName}</p>
+                                    <a className="btn btn-primary d-inline-block" href={`/mis-customer-view/${customer.CustomerID}`}>View</a>
+                                </div>
+                            </div>
+                        </div>
+                        ))
+                    }
+                </div>
             </div>
             {/* <table className="table">
                 <thead>
