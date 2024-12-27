@@ -9,6 +9,7 @@ import ShipmentTable from "./components/ShipmentTable";
 import InvoiceTable from "./components/InvoiceTable";
 import CustomerSearch from "./components/CustomerSearch";
 import CustomerHistory from "./components/CustomerHistory";
+import CustomerView from "./components/CustomerView";
 import { Link } from 'react-router-dom';
 
 function App() {
@@ -26,9 +27,10 @@ function App() {
           <Link to="/mis-invoice">Invoice</Link>
         </nav>
         <Routes>
+          <Route path="/mis-customer" element={<CustomerTable />} />
           <Route path="/mis-customer-search/:searchKeyword" element={<CustomerSearch />} />
           <Route path="/mis-customer-history/:customerId" element={<CustomerHistory />} />
-          <Route path="/mis-customer" element={<CustomerTable />} />
+          <Route path="/mis-customer-view/:customerId" element={<CustomerView />} />
           <Route path="/mis-estimates" element={<EstimatesTable />} />
           <Route path="/mis-jobs" element={<JobsTable />} />
           <Route path="/mis-purchases" element={<PurchasesTable />} />
