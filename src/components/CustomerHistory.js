@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
+import BackButton from "./ui/BackButton";
+ 
 
 const CustomerHistory = () => {
     const [customers, setCustomers] = useState([]);
@@ -19,7 +21,7 @@ const CustomerHistory = () => {
                     method: 'get',
                     url: `${apiUrl}/${customerId}/0`,
                     headers: {
-                        'Content-Type': 'application/json', 
+                        'Content-Type': 'application/json',
                         [apiKey]: apiValue
                     },
                     maxBodyLength: Infinity
@@ -113,24 +115,29 @@ const CustomerHistory = () => {
                     )}
                 </tbody>
             </table>
-            <div className="pagination justify-content-end">
-                <button
-                    className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                >
-                    Previous
-                </button>
-                <span className="mx-3 inline-block">
-                    Page {currentPage} of {totalPages ? totalPages : "..."}
-                </span>
-                <button
-                    className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                >
-                    Next
-                </button>
+            <div className="pagination justify-content-between">
+                <div>
+                    <BackButton/>
+                </div>
+                <div>
+                    <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </button>
+                    <span className="mx-3 inline-block">
+                        Page {currentPage} of {totalPages ? totalPages : "..."}
+                    </span>
+                    <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     );

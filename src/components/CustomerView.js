@@ -3,6 +3,7 @@ import axios from "axios";
 import Search from "./ui/Search";
 
 import { useParams } from 'react-router-dom';
+import BackButton from "./ui/BackButton";
 
 
 const CustomerView = () => {
@@ -133,6 +134,9 @@ const CustomerView = () => {
                                 </div>
                             )}
                         </div>
+                    </div>
+                    <div className="col-12">
+                        <BackButton/>
                     </div>
                 </div>
             </div>
