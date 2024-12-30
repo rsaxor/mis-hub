@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import Search from "./ui/Search";
 
 const CustomerTable = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const initialPage = parseInt(searchParams.get("page"), 10) || 1;
     const [customers, setCustomers] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(initialPage);
     const [totalPages, setTotalPages] = useState(null);
     const [loading, setLoading] = useState(false);
     const itemsPerPage = 25;
@@ -16,7 +19,7 @@ const CustomerTable = () => {
     useEffect(() => {
         const fetchCustomers = async () => {
             setLoading(true);
-
+            console.log(currentPage);
             try {
                 const config = {
                     method: 'get',
@@ -53,13 +56,17 @@ const CustomerTable = () => {
 
     const handlePrevious = () => {
         if (currentPage > 1) {
-            setCurrentPage((prevPage) => prevPage - 1);
+            const newPage = currentPage - 1;
+            setCurrentPage(newPage);
+            setSearchParams({ page: newPage });
         }
     };
 
     const handleNext = () => {
         if (!totalPages || currentPage < totalPages) {
-            setCurrentPage((prevPage) => prevPage + 1);
+            const newPage = currentPage + 1;
+            setCurrentPage(newPage);
+            setSearchParams({ page: newPage });
         }
     };
 
