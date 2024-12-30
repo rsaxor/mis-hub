@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams } from 'react-router-dom';
 
 import Search from "./ui/Search";
+import BackButton from "./ui/BackButton";
 
 const CustomerSearch = () => {
     const [customers, setCustomers] = useState([]);
@@ -113,12 +114,13 @@ const CustomerSearch = () => {
                         </div>
                     ) : customers.length > 0 ? (
                             customers.map((customer, index) => (
-                            <div className="col-6" key={index}>
+                            <div className="col-12 col-sm-6 col-lg-4" key={index}>
                                 <div className="card mb-4">
                                     <div className="card-body">
                                         <h3 className="card-title"><b>{customer.AccountNumber}</b></h3>
                                         <p className="">{customer.CustomerName}</p>
                                         <a className="btn btn-primary d-inline-block" href={`/mis-customer-view/${customer.CustomerID}`}>View</a>
+                                        <a className="btn btn-primary d-inline-block mx-2" href={`/mis-customer-history/${customer.CustomerID}`}>History</a>
                                     </div>
                                 </div>
                             </div>
@@ -130,21 +132,26 @@ const CustomerSearch = () => {
                     )}
                 </div>
             </div>
-            <div className="pagination justify-content-end">
-                <button
-                    className="btn btn-secondary btn-sm mx-3"
-                    onClick={handlePrevious}
-                    disabled={currentPage === 1}
-                >
-                    Previous
-                </button>
-                <button
-                    className="btn btn-secondary btn-sm"
-                    onClick={handleNext}
-                    disabled={totalPages && currentPage === totalPages}
-                >
-                    Next
-                </button>
+            <div className="pagination justify-content-between">
+                <div>
+                    <BackButton/>
+                </div>
+                <div>
+                    <button
+                        className="btn btn-secondary btn-sm mx-3"
+                        onClick={handlePrevious}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </button>
+                    <button
+                        className="btn btn-secondary btn-sm"
+                        onClick={handleNext}
+                        disabled={totalPages && currentPage === totalPages}
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     );
