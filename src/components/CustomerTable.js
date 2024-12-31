@@ -129,7 +129,7 @@ const CustomerTable = () => {
                                 {keysToDisplay.map((key, keyIndex) => (
                                     <td key={keyIndex}>{customer[key] ? customer[key] : `---`}</td>
                                 ))}
-                                <td><a className="btn btn-dark btn-sm" href={`/mis-customer-view/${customer.CustomerID}`}>View</a></td>
+                                <td><a className="btn btn-primary btn-sm" href={`/mis-customer-view/${customer.CustomerID}`}>View</a></td>
                             </tr>
                         ))
                     ) : (
