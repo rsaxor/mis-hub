@@ -126,6 +126,9 @@ const CustomerView = () => {
                                                 ))}
                                             </div>
                                         </div>
+                                        <div>
+                                            <a className="btn btn-primary d-inline-block mt-4" href={`/mis-customer-history/${customer.CustomerID}`}>History</a>
+                                        </div>
                                     </div>
                                 ))
                             ) : (
