@@ -1,74 +1,90 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 
 const EstimatesTable = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [estimates, setEstimates] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 50;
+    const initialPage = parseInt(searchParams.get("page"), 10) || 1;
+    const [currentPage, setCurrentPage] = useState(initialPage);
+    const [totalPages, setTotalPages] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const itemsPerPage = 25;
     const apiUrl = process.env.REACT_APP_API_ESTIMATE;
     const apiKey = process.env.REACT_APP_API_KEY;
     const apiValue = process.env.REACT_APP_API_VALUE;
+    const keysToDisplay = ["EstimateCode", "EstimateDate", "EstimateName", "CustomerName", "ContactName", "Status", "FollowupOn", "CreatedBy", "SubTotal"];
 
     useEffect(() => {
         const fetchEstimates = async () => {
-            const allEstimates = [];
-            for (let i = 1; i <= 5; i++) {
-                try {
-                    const config = {
-                        method: 'get',
-                        url: `${apiUrl}/1/1/null/${i}/50/All/All/All/1/null/null/null`,
-                        headers: {
-                            'Content-Type': 'application/json', 
-                            [apiKey]: apiValue
-                        },
-                        maxBodyLength: Infinity
-                    };
+            setLoading(true);
+            try {
+                const config = {
+                    method: 'get',
+                    url: `${apiUrl}/1/1/null/${currentPage}/${itemsPerPage}/All/All/All/1/null/null/null`,
+                    headers: {
+                        'Content-Type': 'application/json', 
+                        [apiKey]: apiValue
+                    },
+                    maxBodyLength: Infinity
+                };
 
-                    const response = await axios.request(config);
+                const response = await axios.request(config);
 
-                    const validEstimates = response.data.filter(
-                        (estimates) => estimates.EstimateName && estimates.EstimateName.trim() !== ""
-                    );
+                const validEstimates = response.data.filter(
+                    // (estimates) => estimates.EstimateName && estimates.EstimateName.trim() !== ""
+                    (estimates) => estimates
+                );
 
-                    allEstimates.push(...validEstimates);
+                const totalCount = validEstimates[0]?.TotalCount || 0;
+                setTotalPages(Math.ceil(totalCount / itemsPerPage));
+                setEstimates(validEstimates);
 
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                } catch (error) {
-                    console.error("Error fetching estimates data:", error);
-                }
+            } catch (error) {
+                console.error("Error fetching estimates data:", error);
+            } finally {
+                setTimeout(() => {
+                    setLoading(false); 
+                }, 100);
             }
-            setEstimates(allEstimates);
         };
 
         fetchEstimates();
-    }, [apiUrl, apiKey, apiValue]);
+    }, [currentPage, apiUrl, apiKey, apiValue]);
 
-    // Calculate total pages
-    const totalPages = Math.ceil(estimates.length / itemsPerPage);
+    const handlePrevious = () => {
+        if (currentPage > 1) {
+            const newPage = currentPage - 1;
+            setCurrentPage(newPage);
+            setSearchParams({ page: newPage });
+        }
+    };
 
-    // Get current page's items
-    const currentItems = estimates.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
+    const handleNext = () => {
+        if (!totalPages || currentPage < totalPages) {
+            const newPage = currentPage + 1;
+            setCurrentPage(newPage);
+            setSearchParams({ page: newPage });
+        }
     };
 
     return (
         <div>
             <div className="pagination justify-content-end mb-3">
-                <button className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
+               <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={handlePrevious}
                     disabled={currentPage === 1}
                 >
                     Previous
                 </button>
-                <span className="mx-3 inline-block">Page {currentPage} of {totalPages ? totalPages : '...'}</span>
-                <button className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
+                <span className="mx-3 inline-block">
+                    Page {currentPage} of {totalPages || "..."}
+                </span>
+                <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={handleNext}
+                    disabled={totalPages && currentPage === totalPages}
                 >
                     Next
                 </button>
@@ -76,44 +92,54 @@ const EstimatesTable = () => {
             <table className="table">
                 <thead>
                     <tr>
-                        <th align="left" scope="col">#</th>
-                        <th align="left" scope="col">Estimate Name</th>
-                        <th align="left" scope="col">Account Manager</th>
-                        <th align="left" scope="col">Customer Name</th>
-                        <th align="left" scope="col">Customer Email</th>
-                        <th align="left" scope="col">Subtotal</th>
-                        <th align="left" scope="col">Estimate total</th>
+                        {keysToDisplay.map((key, index) => (
+                            <th key={index} align="left" scope="col">
+                                {key}
+                            </th>
+                        ))}
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {currentItems.length > 0 ? currentItems.map((estimate, index) => (
-                        <tr key={index}>
-                            <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                            <td>{estimate.EstimateName}</td>
-                            <td>{estimate.AccountManager}</td>
-                            <td>{estimate.CustomerName}</td>
-                            <td>{estimate.Email}</td>
-                            <td>{estimate.SubTotal}</td>
-                            <td>{estimate.EstTotal}</td>
-                        </tr>
-                    )) : (
+                    {loading ? (
                         <tr>
-                            <td colSpan={7} align="center">Loading . . .</td>
+                            <td colSpan={keysToDisplay.length + 1 || 1} align="center">
+                                Loading . . .
+                            </td>
+                        </tr>
+                    ) : estimates.length > 0 ? (
+                        estimates.map((customer, index) => (
+                            <tr key={index}>
+                                {keysToDisplay.map((key, keyIndex) => (
+                                    <td key={keyIndex}>{customer[key] ? customer[key] : `---`}</td>
+                                ))}
+                                <td><a className="btn btn-primary btn-sm" href={`/#`}>View</a></td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={keysToDisplay.length || 1} align="center">
+                                No data available.
+                            </td>
                         </tr>
                     )}
                 </tbody>
             </table>
             <div className="pagination justify-content-end">
-                <button className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
+                <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={handlePrevious}
                     disabled={currentPage === 1}
                 >
                     Previous
                 </button>
-                <span className="mx-3 inline-block">Page {currentPage} of {totalPages ? totalPages : '...'}</span>
-                <button className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
+                <span className="mx-3 inline-block">
+                    Page {currentPage} of {totalPages || "..."}
+                </span>
+                <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={handleNext}
+                    disabled={totalPages && currentPage === totalPages}
                 >
                     Next
                 </button>
