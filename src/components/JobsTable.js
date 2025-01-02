@@ -1,74 +1,91 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 
 const JobsTable = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const initialPage = parseInt(searchParams.get("page"), 10) || 1;
     const [jobs, setJobs] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 50;
+    const [currentPage, setCurrentPage] = useState(initialPage);
+    const [totalPages, setTotalPages] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const itemsPerPage = 25;
     const apiUrl = process.env.REACT_APP_API_JOBS;
     const apiKey = process.env.REACT_APP_API_KEY;
     const apiValue = process.env.REACT_APP_API_VALUE;
+    const keysToDisplay = ["JobCode", "EstCode", "EstName", "CustomerName", "ContactName", "CompletionDate", "OrderReff", "SalesRep", "SubTotal", "ExportStatus"];
 
     useEffect(() => {
         const fetchJobs = async () => {
-            const allJobs = [];
-            for (let i = 1; i <= 5; i++) {
-                try {
-                    const config = {
-                        method: 'get',
-                        url: `${apiUrl}/1/1/false/JobCode/null/${i}/50/1/null/All/false/null/false/null/null/null`,
-                        headers: {
-                            'Content-Type': 'application/json', 
-                            [apiKey]: apiValue
-                        },
-                        maxBodyLength: Infinity
-                    };
+            setLoading(true);
+            try {
+                const config = {
+                    method: 'get',
+                    url: `${apiUrl}/1/1/false/JobCode/null/${currentPage}/${itemsPerPage}/1/null/All/false/null/false/null/null/null`,
+                    headers: {
+                        'Content-Type': 'application/json', 
+                        [apiKey]: apiValue
+                    },
+                    maxBodyLength: Infinity
+                };
 
-                    const response = await axios.request(config);
+                const response = await axios.request(config);
 
-                    const validJobs = response.data.filter(
-                        (jobs) => jobs.EstCode && jobs.EstCode.trim() !== ""
-                    );
+                const validJobs = response.data.filter(
+                    // (jobs) => jobs.EstCode && jobs.EstCode.trim() !== ""
+                    (jobs) => jobs
+                );
 
-                    allJobs.push(...validJobs);
+                const totalCount = validJobs[0]?.TotalCount || 0;
+                setTotalPages(Math.ceil(totalCount / itemsPerPage));
 
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                } catch (error) {
-                    console.error("Error fetching jobs data:", error);
-                }
+                setJobs(validJobs);
+
+            } catch (error) {
+                console.error("Error fetching jobs data:", error);
+            } finally {
+                setTimeout(() => {
+                    setLoading(false); 
+                }, 100);
             }
-            setJobs(allJobs);
         };
 
         fetchJobs();
-    }, [apiUrl, apiKey, apiValue]);
+    }, [currentPage, apiUrl, apiKey, apiValue]);
 
-    // Calculate total pages
-    const totalPages = Math.ceil(jobs.length / itemsPerPage);
+    const handlePrevious = () => {
+        if (currentPage > 1) {
+            const newPage = currentPage - 1;
+            setCurrentPage(newPage);
+            setSearchParams({ page: newPage });
+        }
+    };
 
-    // Get current page's items
-    const currentItems = jobs.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
+    const handleNext = () => {
+        if (!totalPages || currentPage < totalPages) {
+            const newPage = currentPage + 1;
+            setCurrentPage(newPage);
+            setSearchParams({ page: newPage });
+        }
     };
 
     return (
         <div>
-            <div className="pagination justify-content-end mb-3">
-                <button className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
+            <div className="pagination mb-3 justify-content-end">
+                <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={handlePrevious}
                     disabled={currentPage === 1}
                 >
                     Previous
                 </button>
-                <span className="mx-3 inline-block">Page {currentPage} of {totalPages ? totalPages : '...'}</span>
-                <button className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
+                <span className="mx-3 inline-block">
+                    Page {currentPage} of {totalPages || "..."}
+                </span>
+                <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={handleNext}
+                    disabled={totalPages && currentPage === totalPages}
                 >
                     Next
                 </button>
@@ -76,50 +93,54 @@ const JobsTable = () => {
             <table className="table">
                 <thead>
                     <tr>
-                        <th align="left" scope="col">Count</th>
-                        <th align="left" scope="col">Estimate ID</th>
-                        <th align="left" scope="col">Estimate Code</th>
-                        <th align="left" scope="col">Job Code</th>
-                        <th align="left" scope="col">Job Name</th>
-                        <th align="left" scope="col">Manager</th>
-                        <th align="left" scope="col">Sales Rep</th>
-                        <th align="left" scope="col">Customer</th>
-                        <th align="left" scope="col">Estimate total</th>
-                        <th align="left" scope="col">ExportStatus</th>
+                        {keysToDisplay.map((key, index) => (
+                            <th key={index} align="left" scope="col">
+                                {key}
+                            </th>
+                        ))}
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {currentItems.length > 0 ? currentItems.map((jobs, index) => (
-                        <tr key={index}>
-                            <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                            <td>{jobs.EstID}</td>
-                            <td>{jobs.EstCode}</td>
-                            <td>{jobs.JobCode}</td>
-                            <td>{jobs.EstName}</td>
-                            <td>{jobs.Manager}</td>
-                            <td>{jobs.SalesRep}</td>
-                            <td>{jobs.ContactName}</td>
-                            <td>{jobs.EstTotal}</td>
-                            <td>{jobs.EstStatus}</td>
-                        </tr>
-                    )) : (
+                    {loading ? (
                         <tr>
-                            <td colSpan={10} align="center">Loading . . .</td>
+                            <td colSpan={keysToDisplay.length + 1 || 1} align="center">
+                                Loading . . .
+                            </td>
+                        </tr>
+                    ) : jobs.length > 0 ? (
+                        jobs.map((customer, index) => (
+                            <tr key={index}>
+                                {keysToDisplay.map((key, keyIndex) => (
+                                    <td key={keyIndex}>{customer[key] ? customer[key] : `---`}</td>
+                                ))}
+                                <td><a className="btn btn-primary btn-sm" href={`/#`}>View</a></td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={keysToDisplay.length || 1} align="center">
+                                No data available.
+                            </td>
                         </tr>
                     )}
                 </tbody>
             </table>
             <div className="pagination justify-content-end">
-                <button className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
+            <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={handlePrevious}
                     disabled={currentPage === 1}
                 >
                     Previous
                 </button>
-                <span className="mx-3 inline-block">Page {currentPage} of {totalPages ? totalPages : '...'}</span>
-                <button className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
+                <span className="mx-3 inline-block">
+                    Page {currentPage} of {totalPages || "..."}
+                </span>
+                <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={handleNext}
+                    disabled={totalPages && currentPage === totalPages}
                 >
                     Next
                 </button>
