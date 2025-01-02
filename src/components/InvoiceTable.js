@@ -1,121 +1,146 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 
 const InvoiceTable = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const initialPage = parseInt(searchParams.get("page"), 10) || 1;
     const [invoices, setInvoice] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 50;
+    const [currentPage, setCurrentPage] = useState(initialPage);
+    const [totalPages, setTotalPages] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const itemsPerPage = 25;
     const apiUrl = process.env.REACT_APP_API_INVOICE;
     const apiKey = process.env.REACT_APP_API_KEY;
     const apiValue = process.env.REACT_APP_API_VALUE;
+    const keysToDisplay = ["EstCode", "UdfJobCode", "TransactionDate", "CustomerName", "ContactName", "OrderReff", "EstName", "SubTotal", "VAT", "Total", "BalanceB4Carriage", "SalesRep", "InvoiceStatus" ];
 
     useEffect(() => {
         const fetchInvoice = async () => {
-            const allInvoice = [];
-            for (let i = 1; i <= 5; i++) {
-                try {
-                    const config = {
-                        method: 'get',
-                        url: `${apiUrl}/0/1/null/null/null/${i}/Invoice/1/null/null/null`,
-                        headers: {
-                            'Content-Type': 'application/json', 
-                            [apiKey]: apiValue
-                        },
-                        maxBodyLength: Infinity
-                    };
+            setLoading(true);
+            try {
+                const config = {
+                    method: 'get',
+                    url: `${apiUrl}/0/1/null/null/null/${currentPage}/Invoice/1/null/null/null`,
+                    headers: {
+                        'Content-Type': 'application/json', 
+                        [apiKey]: apiValue
+                    },
+                    maxBodyLength: Infinity
+                };
 
-                    const response = await axios.request(config);
+                const response = await axios.request(config);
 
-                    const validInvoice = response.data.filter(
-                        (invoices) => invoices.EstName && invoices.EstName.trim() !== ""
-                    );
+                const validInvoice = response.data.filter(
+                    // (invoices) => invoices.EstName && invoices.EstName.trim() !== ""
+                    (invoices) => invoices
+                );
 
-                    allInvoice.push(...validInvoice);
+                const totalCount = validInvoice[0]?.TotalCount || 0;
+                setTotalPages(Math.ceil(totalCount / itemsPerPage));
 
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                } catch (error) {
-                    console.error("Error fetching invoices data:", error);
-                }
+                setInvoice(validInvoice);
+                
+            } catch (error) {
+                console.error("Error fetching invoice data:", error);
+            } finally {
+                setTimeout(() => {
+                    setLoading(false); 
+                }, 100);
             }
-            setInvoice(allInvoice);
         };
 
         fetchInvoice();
-    }, [apiUrl, apiKey, apiValue]);
+    }, [currentPage, apiUrl, apiKey, apiValue]);
 
-    // Calculate total pages
-    const totalPages = Math.ceil(invoices.length / itemsPerPage);
+    const handlePrevious = () => {
+        if (currentPage > 1) {
+            const newPage = currentPage - 1;
+            setCurrentPage(newPage);
+            setSearchParams({ page: newPage });
+        }
+    };
 
-    // Get current page's items
-    const currentItems = invoices.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
+    const handleNext = () => {
+        if (!totalPages || currentPage < totalPages) {
+            const newPage = currentPage + 1;
+            setCurrentPage(newPage);
+            setSearchParams({ page: newPage });
+        }
     };
 
     return (
         <div>
             <div className="pagination justify-content-end mb-3">
-                <button className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
+                <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={handlePrevious}
                     disabled={currentPage === 1}
                 >
                     Previous
                 </button>
-                <span className="mx-3 inline-block">Page {currentPage} of {totalPages ? totalPages : '...'}</span>
-                <button className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
+                <span className="mx-3 inline-block">
+                    Page {currentPage} of {totalPages || "..."}
+                </span>
+                <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={handleNext}
+                    disabled={totalPages && currentPage === totalPages}
                 >
                     Next
                 </button>
             </div>
             <table className="table">
-                <thead>
+            <thead>
                     <tr>
-                        <th align="left" scope="col">Count</th>
-                        <th align="left" scope="col">Estimate Name</th>
-                        <th align="left" scope="col">Customer Name</th>
-                        <th align="left" scope="col">Sales Person</th>
-                        <th align="left" scope="col">Estimator</th>
-                        <th align="left" scope="col">Account #</th>
-                        <th align="left" scope="col">Balance</th>
-                        <th align="left" scope="col">Invoice Status</th> 
+                        {keysToDisplay.map((key, index) => (
+                            <th key={index} align="left" scope="col">
+                                {key}
+                            </th>
+                        ))}
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {currentItems.length > 0 ? currentItems.map((invoices, index) => (
-                        <tr key={index}>
-                            <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                            <td>{invoices.EstName}</td>
-                            <td>{invoices.CustomerName}</td>
-                            <td>{invoices.SalesPerson}</td>
-                            <td>{invoices.Estimator}</td>
-                            <td>{invoices.AccountNumber}</td>
-                            <td>{invoices.Balance}</td>
-                            <td>{invoices.InvoiceStatus}</td>
-                        </tr>
-                    )) : (
+                    {loading ? (
                         <tr>
-                            <td colSpan={8} align="center">Loading . . .</td>
+                            <td colSpan={keysToDisplay.length + 1 || 1} align="center">
+                                Loading . . .
+                            </td>
+                        </tr>
+                    ) : invoices.length > 0 ? (
+                        invoices.map((customer, index) => (
+                            <tr key={index}>
+                                {keysToDisplay.map((key, keyIndex) => (
+                                    <td key={keyIndex}>{customer[key] ? customer[key] : `---`}</td>
+                                ))}
+                                <td><a className="btn btn-primary btn-sm" href={`/mis-customer-view/${customer.CustomerID}`}>View</a></td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={keysToDisplay.length || 1} align="center">
+                                No data available.
+                            </td>
                         </tr>
                     )}
                 </tbody>
             </table>
             <div className="pagination justify-content-end">
-                <button className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
+                <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={handlePrevious}
                     disabled={currentPage === 1}
                 >
                     Previous
                 </button>
-                <span className="mx-3 inline-block">Page {currentPage} of {totalPages ? totalPages : '...'}</span>
-                <button className="btn btn-primary btn-sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
+                <span className="mx-3 inline-block">
+                    Page {currentPage} of {totalPages || "..."}
+                </span>
+                <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={handleNext}
+                    disabled={totalPages && currentPage === totalPages}
                 >
                     Next
                 </button>
