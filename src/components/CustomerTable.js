@@ -19,7 +19,6 @@ const CustomerTable = () => {
     useEffect(() => {
         const fetchCustomers = async () => {
             setLoading(true);
-            console.log(currentPage);
             try {
                 const config = {
                     method: 'get',
