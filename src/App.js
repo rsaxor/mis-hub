@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import CurrentPage from "./components/ui/CurrentPage";
 import CustomerTable from "./components/CustomerTable";
 import EstimatesTable from "./components/EstimatesTable";
 import JobsTable from "./components/JobsTable";
@@ -16,7 +17,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <h1 className="fw-bold">MIS Datahub</h1>
+        <h1 className="fw-bold">MIS Datahub <CurrentPage /></h1>
         <nav className="main-nav">
           <Link to="/mis-customer">Customer</Link>
           <Link to="/mis-estimates">Estimates</Link>
