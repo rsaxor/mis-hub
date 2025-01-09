@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import Search from "./ui/Search";
 
 const PurchasesTable = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -18,6 +19,9 @@ const PurchasesTable = () => {
     useEffect(() => {
         const fetchPurchases = async () => {
             setLoading(true);
+            if(searchParams.get("page") === null) {
+                setCurrentPage(1);
+            }
             try {
                 const config = {
                     method: 'get',
@@ -50,7 +54,7 @@ const PurchasesTable = () => {
         };
 
         fetchPurchases();
-    }, [currentPage, apiUrl, apiKey, apiValue]);
+    }, [currentPage, apiUrl, apiKey, apiValue, searchParams]);
 
     const handlePrevious = () => {
         if (currentPage > 1) {
@@ -69,24 +73,33 @@ const PurchasesTable = () => {
     };
     return (
         <div>
-            <div className="pagination justify-content-end mb-3">
-                <button
-                    className="btn btn-secondary btn-sm"
-                    onClick={handlePrevious}
-                    disabled={currentPage === 1}
-                >
-                    Previous
-                </button>
-                <span className="mx-3 inline-block">
-                    Page {currentPage} of {totalPages || "..."}
-                </span>
-                <button
-                    className="btn btn-secondary btn-sm"
-                    onClick={handleNext}
-                    disabled={totalPages && currentPage === totalPages}
-                >
-                    Next
-                </button>
+            <div className="container-fluid px-0">
+                <div className="row justify-content-between">
+                    <div className="col-3">
+                        <Search />
+                    </div>
+                    <div className="col-3">
+                        <div className="pagination mb-3 justify-content-end">
+                            <button
+                                className="btn btn-secondary btn-sm"
+                                onClick={handlePrevious}
+                                disabled={currentPage === 1}
+                            >
+                                Previous
+                            </button>
+                            <span className="mx-3 inline-block">
+                                Page {currentPage} of {totalPages || "..."}
+                            </span>
+                            <button
+                                className="btn btn-secondary btn-sm"
+                                onClick={handleNext}
+                                disabled={totalPages && currentPage === totalPages}
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <table className="table">
                 <thead>

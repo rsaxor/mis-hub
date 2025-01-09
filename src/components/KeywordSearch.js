@@ -11,6 +11,7 @@ const getApiDetails = (queryPage, searchKeyword, currentPage, itemsPerPage) => {
         "mis-customer": process.env.REACT_APP_API_CUSTOMER,
         "mis-estimates": process.env.REACT_APP_API_ESTIMATE,
         "mis-jobs": process.env.REACT_APP_API_JOBS,
+        "mis-purchases": process.env.REACT_APP_API_PURCHASE,
     };
 
     const apiUrl = baseUrls[queryPage] || "";
@@ -19,6 +20,7 @@ const getApiDetails = (queryPage, searchKeyword, currentPage, itemsPerPage) => {
         "mis-customer": `${apiUrl}/1/1/1/${searchKeyword}/${currentPage}/${itemsPerPage}/1/false`,
         "mis-estimates": `${apiUrl}/1/1/${searchKeyword}/${currentPage}/${itemsPerPage}/All/All/All/1/null/null/null`,
         "mis-jobs": `${apiUrl}/1/1/false/JobCode/null/${currentPage}/${itemsPerPage}/1/${searchKeyword}/All/false/null/false/null/null/null`,
+        "mis-purchases": `${apiUrl}/0/1/${searchKeyword}/${currentPage}/${itemsPerPage}/PO/1/null/null/null`,
     };
 
     return {
@@ -66,7 +68,7 @@ const SearchResultCard = ({ searchResult, queryPage }) => {
                 </div>
             );
 
-        case "mis-jobs": // Example of an additional condition
+        case "mis-jobs":
             return (
                 <div className="col-12 col-sm-6 col-lg-4">
                     <div className="card mb-4">
@@ -79,8 +81,25 @@ const SearchResultCard = ({ searchResult, queryPage }) => {
                     </div>
                 </div>
             );
+        
+        case "mis-purchases":
+            return (
+                <div className="col-12 col-sm-6 col-lg-4">
+                    <div className="card mb-4">
+                        <div className="card-body">
+                            <h3 className="card-title mb-0"><b>{searchResult.POID}</b></h3>
+                            <p className="mb-0">Supplier: <b>{searchResult.SupplierName}</b></p>
+                            <p className="mb-0">Customer name: <b>{searchResult.CustomerName}</b></p>
+                            <p className="mb-0">Job reference: <b>{searchResult.ReffNo}</b></p>
+                            <p className="mb-0">Total Amount: <b>{searchResult.POTotal}</b></p>
+                            <p className="mb-0">Status: <b>{searchResult.PoStatus}</b></p>
+                            <p className="mb-0">Date: <b>{searchResult.PODate}</b></p>
+                            <p className="mb-0">Due Date: <b>{searchResult.PORequiredDate}</b></p>
+                        </div>
+                    </div>
+                </div>
+            );
 
-        // Add more cases as needed
         default:
             return (
                 <div className="col-12 col-sm-6 col-lg-4">
