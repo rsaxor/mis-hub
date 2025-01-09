@@ -1,15 +1,23 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { currentPageBaseURL } from "./CurrentPage";
+import { useParams } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
-const Search = () => {
+const Search = ({onSearchSubmit}) => {
     const [searchKeyword, setSearchKeyword] = useState('');
     const navigate = useNavigate();
-
+    const location = useLocation();
+    const { queryPage }  = useParams();
+    const basePath = location.pathname.split("/")[1];
+    const queriedPage = basePath === 'mis-search' ? queryPage : currentPageBaseURL(location.pathname);
+    
     const handleSearch = (event) => {
         event.preventDefault();
         if (searchKeyword.trim()) {
-            navigate(`/mis-customer-search/${searchKeyword}`);
+            if (onSearchSubmit) onSearchSubmit(); // Reset currentPage
+            navigate(`/mis-search/${queriedPage}/${searchKeyword}`);
         }
     };
     return (
