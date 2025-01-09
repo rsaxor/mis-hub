@@ -72,9 +72,9 @@ const SearchResultCard = ({ searchResult, queryPage }) => {
                     <div className="card mb-4">
                         <div className="card-body">
                             <h3 className="card-title mb-0"><b>{searchResult.JobCode}</b></h3>
-                            <h3 className="card-title mb-0">Ref. Est. Code: <b>{searchResult.EstCode}</b></h3>
-                            <p className="mb-2"><b>{searchResult.EstName}</b></p>
-                            <p>{searchResult.CustomerName}</p>
+                            <p className="mb-0"><b>{searchResult.EstName}</b></p>
+                            <p className="mb-2">{searchResult.CustomerName}</p>
+                            <p className="card-title mb-0">[Reference estimate code: <b>{searchResult.EstCode}</b>]</p>
                         </div>
                     </div>
                 </div>
