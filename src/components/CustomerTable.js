@@ -19,6 +19,9 @@ const CustomerTable = () => {
     useEffect(() => {
         const fetchCustomers = async () => {
             setLoading(true);
+            if(searchParams.get("page") === null) {
+                setCurrentPage(1);
+            }
             try {
                 const config = {
                     method: 'get',
@@ -51,7 +54,7 @@ const CustomerTable = () => {
 
         fetchCustomers();
 
-    }, [currentPage, apiUrl, apiKey, apiValue]);
+    }, [currentPage, apiUrl, apiKey, apiValue, searchParams]);
 
     const handlePrevious = () => {
         if (currentPage > 1) {

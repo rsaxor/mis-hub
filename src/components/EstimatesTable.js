@@ -16,9 +16,13 @@ const EstimatesTable = () => {
     const apiValue = process.env.REACT_APP_API_VALUE;
     const keysToDisplay = ["EstimateCode", "EstimateDate", "EstimateName", "CustomerName", "ContactName", "Status", "FollowupOn", "CreatedBy", "SubTotal"];
 
+    
     useEffect(() => {
         const fetchEstimates = async () => {
             setLoading(true);
+            if(searchParams.get("page") === null) {
+                setCurrentPage(1);
+            }
             try {
                 const config = {
                     method: 'get',
@@ -51,7 +55,7 @@ const EstimatesTable = () => {
         };
 
         fetchEstimates();
-    }, [currentPage, apiUrl, apiKey, apiValue]);
+    }, [currentPage, apiUrl, apiKey, apiValue, searchParams]);
 
     const handlePrevious = () => {
         if (currentPage > 1) {
