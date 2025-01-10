@@ -12,6 +12,8 @@ const getApiDetails = (queryPage, searchKeyword, currentPage, itemsPerPage) => {
         "mis-estimates": process.env.REACT_APP_API_ESTIMATE,
         "mis-jobs": process.env.REACT_APP_API_JOBS,
         "mis-purchases": process.env.REACT_APP_API_PURCHASE,
+        "mis-shipment": process.env.REACT_APP_API_SHIPMENTS,
+        "mis-invoice": process.env.REACT_APP_API_INVOICE
     };
 
     const apiUrl = baseUrls[queryPage] || "";
@@ -21,6 +23,8 @@ const getApiDetails = (queryPage, searchKeyword, currentPage, itemsPerPage) => {
         "mis-estimates": `${apiUrl}/1/1/${searchKeyword}/${currentPage}/${itemsPerPage}/All/All/All/1/null/null/null`,
         "mis-jobs": `${apiUrl}/1/1/false/JobCode/null/${currentPage}/${itemsPerPage}/1/${searchKeyword}/All/false/null/false/null/null/null`,
         "mis-purchases": `${apiUrl}/0/1/${searchKeyword}/${currentPage}/${itemsPerPage}/PO/1/null/null/null`,
+        "mis-shipment": `${apiUrl}/0/1/${searchKeyword}/${currentPage}/${itemsPerPage}/1/null/null/null`,
+        "mis-invoice": `${apiUrl}/0/1/${searchKeyword}/null/null/${currentPage}/Invoice/1/null/null/null`
     };
 
     return {
@@ -95,6 +99,40 @@ const SearchResultCard = ({ searchResult, queryPage }) => {
                             <p className="mb-0">Status: <b>{searchResult.PoStatus}</b></p>
                             <p className="mb-0">Date: <b>{searchResult.PODate}</b></p>
                             <p className="mb-0">Due Date: <b>{searchResult.PORequiredDate}</b></p>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            case "mis-shipment":
+            return (
+                <div className="col-12 col-sm-6 col-lg-4">
+                    <div className="card mb-4">
+                        <div className="card-body">
+                            <h3 className="card-title mb-0"><b>{searchResult.DelCode}</b></h3>
+                            <p className="mb-0">Job Code: <b>{searchResult.JobCode}</b></p>
+                            <p className="mb-0">Customer name: <b>{searchResult.CustomerName}</b></p>
+                            <p className="mb-0">Job title: <b>{searchResult.JobTitle}</b></p>
+                            <p className="mb-0">Qty: <b>{searchResult.QTYOrdered}</b></p>
+                            <p className="mb-0">Shipping: <b>{searchResult.ShipDate}</b></p>
+                            <p className="mb-0">Shipping Date: <b>{searchResult.ActualShipDate}</b></p>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            case "mis-invoice":
+            return (
+                <div className="col-12 col-sm-6 col-lg-4">
+                    <div className="card mb-4">
+                        <div className="card-body">
+                            <h3 className="card-title mb-0"><b>{searchResult.EstCode}</b></h3>
+                            <h5 className="mb-0"><b>{searchResult.EstName}</b></h5>
+                            <p className="mb-0">Job Code: <b>{searchResult.UdfJobCode}</b></p>
+                            <p className="mb-0">Transaction Date: <b>{searchResult.TransactionDate}</b></p>
+                            <p className="mb-0">Customer name: <b>{searchResult.CustomerName}</b></p>
+                            <p className="mb-0">Total: <b>{searchResult.Total}</b></p>
+                            <p className="mb-0">Status: <b>{searchResult.InvoiceStatus}</b></p>
                         </div>
                     </div>
                 </div>
