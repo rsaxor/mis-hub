@@ -87,34 +87,36 @@ const CustomerHistory = () => {
                     Next
                 </button>
             </div>
-            <table className="table">
-                <thead>
-                    <tr>
-                        {allKeys.map((key, index) => (
-                            <th key={index} align="left" scope="col">
-                                {key}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {currentItems.length > 0 ? (
-                        currentItems.map((customer, index) => (
-                            <tr key={index}>
-                                {allKeys.map((key, keyIndex) => (
-                                    <td key={keyIndex}>{customer[key]}</td>
-                                ))}
-                            </tr>
-                        ))
-                    ) : (
+            <div className="table-responsive">
+                <table className="table">
+                    <thead>
                         <tr>
-                            <td colSpan={allKeys.length} align="center">
-                                Loading . . .
-                            </td>
+                            {allKeys.map((key, index) => (
+                                <th key={index} align="left" scope="col">
+                                    {key}
+                                </th>
+                            ))}
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {currentItems.length > 0 ? (
+                            currentItems.map((customer, index) => (
+                                <tr key={index}>
+                                    {allKeys.map((key, keyIndex) => (
+                                        <td key={keyIndex}>{customer[key]}</td>
+                                    ))}
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={allKeys.length} align="center">
+                                    Loading . . .
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
             <div className="pagination justify-content-between">
                 <div>
                     <BackButton/>
