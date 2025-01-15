@@ -122,12 +122,12 @@ const EstimatesTable = () => {
                             </td>
                         </tr>
                     ) : estimates.length > 0 ? (
-                        estimates.map((customer, index) => (
+                        estimates.map((estimate, index) => (
                             <tr key={index}>
                                 {keysToDisplay.map((key, keyIndex) => (
-                                    <td key={keyIndex}>{customer[key] ? customer[key] : `---`}</td>
+                                    <td key={keyIndex}>{estimate[key] ? estimate[key] : `---`}</td>
                                 ))}
-                                <td><a className="btn btn-primary btn-sm" href={`/#`}>View</a></td>
+                                <td><a className="btn btn-primary btn-sm" href={`/view/mis-estimates/${estimate['EstID']}`}>View</a></td>
                             </tr>
                         ))
                     ) : (

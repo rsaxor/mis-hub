@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useSearchParams } from 'react-router-dom';
-
 import Search from "./ui/Search";
 import BackButton from "./ui/BackButton";
 import { getPageTitleText } from "./ui/CurrentPage";
@@ -67,6 +66,12 @@ const SearchResultCard = ({ searchResult, queryPage }) => {
                             <h3 className="card-title mb-0"><b>{searchResult.EstimateCode}</b></h3>
                             <p className="mb-2"><b>{searchResult.EstimateName}</b></p>
                             <p>{searchResult.CustomerName}</p>
+                            <a
+                                className="btn btn-primary d-inline-block"
+                                href={`/view/mis-estimates/${searchResult.EstID}`}
+                            >
+                                View
+                            </a>
                         </div>
                     </div>
                 </div>
