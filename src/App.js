@@ -11,6 +11,7 @@ import InvoiceTable from "./components/InvoiceTable";
 import KeywordSearch from "./components/KeywordSearch";
 import CustomerHistory from "./components/CustomerHistory";
 import CustomerView from "./components/CustomerView";
+import SingleView from "./components/SingleView";
 import { Link } from 'react-router-dom';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <Route path="/mis-inventory" element={<InventoryTable />} />
           <Route path="/mis-shipment" element={<ShipmentTable />} />
           <Route path="/mis-invoice" element={<InvoiceTable />} />
+          <Route path="/view/:queryPage/:key" element={<SingleView />} />
         </Routes>
       </div>
     </Router>
