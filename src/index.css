@@ -23,5 +23,20 @@ table thead tr th {
 }
 .main-nav * {
   display: inline-block;
-  margin-right: 10px;
+  margin: 0;
+  color: #000;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-size: 12px;
+  line-height: 1;
+  padding: 10px;
+}
+.main-nav *:hover:not(.active) {
+  text-decoration: underline;
+}
+.main-nav .active {
+  font-weight: bold;
+  color: #fff;
+  background: #2f3e56;
 }

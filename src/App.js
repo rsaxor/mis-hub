@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import CurrentPage from "./components/ui/CurrentPage";
 import CustomerTable from "./components/CustomerTable";
 import EstimatesTable from "./components/EstimatesTable";
@@ -13,22 +13,21 @@ import CustomerHistory from "./components/CustomerHistory";
 import CustomerView from "./components/CustomerView";
 import SingleView from "./components/SingleView";
 import Exporter from "./components/Exporter";
-import { Link } from 'react-router-dom';
 
 function App() {
   return (
     <Router>
       <div className="App">
         <h1 className="fw-bold">MIS Datahub <CurrentPage /></h1>
-        <nav className="main-nav bg-light p-4">
-          <Link to="/mis-customer">Customer</Link>
-          <Link to="/mis-estimates">Estimates</Link>
-          <Link to="/mis-jobs">Jobs</Link>
-          <Link to="/mis-purchases">Purchases</Link>
-          <Link to="/mis-inventory">Inventory</Link>
-          <Link to="/mis-shipment">Shipment</Link>
-          <Link to="/mis-invoice">Invoice</Link>
-          <Link to="/mis-exporter">Export</Link>
+        <nav className="main-nav bg-secondary px-2 py-3">
+          <NavLink to="/mis-customer" className={({ isActive }) => isActive ? "active" : ""}>Customer</NavLink>
+          <NavLink to="/mis-estimates" className={({ isActive }) => isActive ? "active" : ""}>Estimates</NavLink>
+          <NavLink to="/mis-jobs" className={({ isActive }) => isActive ? "active" : ""}>Jobs</NavLink>
+          <NavLink to="/mis-purchases" className={({ isActive }) => isActive ? "active" : ""}>Purchases</NavLink>
+          <NavLink to="/mis-inventory" className={({ isActive }) => isActive ? "active" : ""}>Inventory</NavLink>
+          <NavLink to="/mis-shipment" className={({ isActive }) => isActive ? "active" : ""}>Shipment</NavLink>
+          <NavLink to="/mis-invoice" className={({ isActive }) => isActive ? "active" : ""}>Invoice</NavLink>
+          <NavLink to="/mis-exporter" className={({ isActive }) => isActive ? "active" : ""}>Export</NavLink>
         </nav>
         <Routes>
           <Route path="/mis-customer" element={<CustomerTable />} />
