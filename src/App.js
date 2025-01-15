@@ -12,6 +12,7 @@ import KeywordSearch from "./components/KeywordSearch";
 import CustomerHistory from "./components/CustomerHistory";
 import CustomerView from "./components/CustomerView";
 import SingleView from "./components/SingleView";
+import Exporter from "./components/Exporter";
 import { Link } from 'react-router-dom';
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
     <Router>
       <div className="App">
         <h1 className="fw-bold">MIS Datahub <CurrentPage /></h1>
-        <nav className="main-nav">
+        <nav className="main-nav bg-light p-4">
           <Link to="/mis-customer">Customer</Link>
           <Link to="/mis-estimates">Estimates</Link>
           <Link to="/mis-jobs">Jobs</Link>
@@ -27,6 +28,7 @@ function App() {
           <Link to="/mis-inventory">Inventory</Link>
           <Link to="/mis-shipment">Shipment</Link>
           <Link to="/mis-invoice">Invoice</Link>
+          <Link to="/mis-exporter">Export</Link>
         </nav>
         <Routes>
           <Route path="/mis-customer" element={<CustomerTable />} />
@@ -39,6 +41,7 @@ function App() {
           <Route path="/mis-inventory" element={<InventoryTable />} />
           <Route path="/mis-shipment" element={<ShipmentTable />} />
           <Route path="/mis-invoice" element={<InvoiceTable />} />
+          <Route path="/mis-exporter" element={<Exporter />} />
           <Route path="/view/:queryPage/:key" element={<SingleView />} />
         </Routes>
       </div>

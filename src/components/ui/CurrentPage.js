@@ -12,6 +12,7 @@ const pageTitles = {
   "/mis-search": "Search",
   "/mis-customer-history": "Customer History",
   "/mis-customer-view": "Customer View",
+  "/mis-exporter": "Exporter",
 };
 
 const getPageTitle = (path) => {
