@@ -14,7 +14,7 @@ const CustomerTable = () => {
     const apiUrl = process.env.REACT_APP_API_CUSTOMER;
     const apiKey = process.env.REACT_APP_API_KEY;
     const apiValue = process.env.REACT_APP_API_VALUE;
-    const keysToDisplay = ["Row", "AccountNumber", "CustomerName", "Email", "Tel1", "Contact", "Type" ];
+    const keysToDisplay = ["Row", "CustomerID", "AccountNumber", "CustomerName", "Email", "Tel1", "Contact", "Type" ];
 
     useEffect(() => {
         const fetchCustomers = async () => {
