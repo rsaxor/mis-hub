@@ -67,3 +67,52 @@ export const getUserById = async (userID) => {
 		return null; // Return an empty object on failure
 	}
 }
+
+export const getTotalCount = async (selectedApi) => {
+	const apiConfigs = {
+		customers: {
+			url: process.env.REACT_APP_API_CUSTOMER,
+			query: "/1/1/1/null/1/25/1/false",
+		},
+		estimates: {
+			url: process.env.REACT_APP_API_ESTIMATE,
+			query: "/1/1/null/1/25/All/All/All/1/null/null/null",
+		},
+		invoices: {
+			url: process.env.REACT_APP_API_INVOICE,
+			query: "/0/1/null/null/null/1/Invoice/1/null/null/null",
+		},
+	};
+
+	// Get the config for the selected API
+	const apiConfig = apiConfigs[selectedApi];
+
+	if (!apiConfig) {
+		console.error(`Invalid API selection: ${selectedApi}`);
+		return 0;
+	}
+
+	const apiQuery = `${apiConfig.url}${apiConfig.query}`;
+	const config = {
+		method: "get",
+		url: apiQuery,
+		headers: {
+			"Content-Type": "application/json",
+			[process.env.REACT_APP_API_KEY]: process.env.REACT_APP_API_VALUE,
+		},
+		maxBodyLength: Infinity,
+	};
+
+	try {
+		const response = await axios.request(config);
+		if (response.data && response.data[0]?.TotalCount) {
+			return parseInt(response.data[0].TotalCount, 10);
+		} else {
+			console.error("TotalCount not found in response.");
+			return 0;
+		}
+	} catch (error) {
+		console.error("Error fetching total count:", error);
+		return 0;
+	}
+};
