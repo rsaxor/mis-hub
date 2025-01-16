@@ -19,7 +19,7 @@ function App() {
     <Router>
       <div className="App">
         <h1 className="fw-bold">MIS Datahub <CurrentPage /></h1>
-        <nav className="main-nav bg-secondary px-2 py-3">
+        <nav className="main-nav px-2 py-3">
           <NavLink to="/mis-customer" className={({ isActive }) => isActive ? "active" : ""}>Customer</NavLink>
           <NavLink to="/mis-estimates" className={({ isActive }) => isActive ? "active" : ""}>Estimates</NavLink>
           <NavLink to="/mis-jobs" className={({ isActive }) => isActive ? "active" : ""}>Jobs</NavLink>
