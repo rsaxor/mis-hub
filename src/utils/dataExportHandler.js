@@ -4,7 +4,7 @@ import { getTotalCount } from "./getApiData";
 const apiKey = process.env.REACT_APP_API_KEY;
 const apiValue = process.env.REACT_APP_API_VALUE;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regular expression to validate email format
-const sampleTotalCount = 5; // Test value
+const sampleTotalCount = 2; // Test value
 
 const apiConfigurations = {
     customers: {
@@ -24,7 +24,7 @@ const apiConfigurations = {
     },
 };
 
-const dataExportHandler = async (selectedApi) => {
+const dataExportHandler = async (selectedApi, exportSeparately, selectedSample, selectedSort) => {
     const apiConfig = apiConfigurations[selectedApi];
 
     if (!apiConfig) {
@@ -32,7 +32,7 @@ const dataExportHandler = async (selectedApi) => {
         return {};
     }
 
-    const totalCount = await getTotalCount(selectedApi);
+    let totalCount = await getTotalCount(selectedApi);
 
     if (totalCount === 0) {
         alert("Unable to fetch total count. Export canceled.");
@@ -42,7 +42,9 @@ const dataExportHandler = async (selectedApi) => {
     const validData = [];
     const invalidData = [];
 
-    for (let currentPage = 1; currentPage <= sampleTotalCount; currentPage++) {
+    totalCount = Number(selectedSample) === 1 ? sampleTotalCount : totalCount;
+
+    for (let currentPage = 1; currentPage <= totalCount; currentPage++) {
         const config = {
             method: "get",
             url: `${apiConfig.url}${apiConfig.endpoint(currentPage)}`,
@@ -63,7 +65,9 @@ const dataExportHandler = async (selectedApi) => {
 
             // Separate valid and invalid data based on API-specific validation logic
             data.forEach((row) => {
-                const isValid = apiConfig.validateData(row);
+                let isValid = apiConfig.validateData(row);
+                isValid = Number(exportSeparately) === 0 ? true : isValid; // always true if exportSeparately is not selected (false)
+
                 if (isValid) {
                     validData.push(row);
                 } else {
@@ -74,6 +78,13 @@ const dataExportHandler = async (selectedApi) => {
             console.error("Error fetching data:", error);
             alert("An error occurred during export. Please try again.");
             return {};
+        }
+    }
+
+    if (selectedApi === "customers" && selectedSort === "customerId") {
+        validData.sort((a, b) => a.CustomerID - b.CustomerID);
+        if( Number(exportSeparately) === 1 && invalidData.length > 0 ) {
+            invalidData.sort((a, b) => a.CustomerID - b.CustomerID);
         }
     }
 

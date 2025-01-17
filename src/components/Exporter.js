@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import dataExportHandler from "../utils/dataExportHandler"
@@ -7,6 +7,9 @@ import dataExportHandler from "../utils/dataExportHandler"
 const Exporter = () => {
     const [selectedApi, setSelectedApi] = useState("customers");
     const [selectedFormat, setSelectedFormat] = useState("csv");
+    const [selectedValidatedForm, setSelectedValidatedForm] = useState(1);
+    const [selectedSort, setSelectedSort] = useState("");
+    const [selectedSample, setSelectedSample] = useState(1);
     const [isExporting, setIsExporting] = useState(false);
 
     const handleExport = async (event) => {
@@ -14,8 +17,7 @@ const Exporter = () => {
         setIsExporting(true);
         
         try {
-
-            const { validData, invalidData  } = await dataExportHandler(selectedApi);
+            const { validData, invalidData  } = await dataExportHandler(selectedApi, selectedValidatedForm, selectedSample, selectedSort);
             const timestamp = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 12); // Format: YYYYMMDDHHMM
 
             if (validData.length > 0) {
@@ -68,6 +70,16 @@ const Exporter = () => {
         XLSX.writeFile(workbook, filename);
     };
 
+    useEffect(() => {
+        if (selectedApi !== "customers") {
+            setSelectedSort("");
+        }
+        if (selectedApi === "invoices") {
+            setSelectedValidatedForm(1);
+        }
+    }, [selectedApi]);
+    
+
     return (
         <div className="container-fluid px-0">
             <div className="row">
@@ -103,12 +115,60 @@ const Exporter = () => {
                                     </select>
                                 </div>
                             </div>
+                            <div className="col-6 col-md-auto">
+                                {selectedApi === "customers" && (
+                                    <div className="form-group">
+                                        <label htmlFor="select-sort">Sort by</label>
+                                        <select
+                                            id="select-sort"
+                                            className="form-control"
+                                            value={selectedSort}
+                                            onChange={(e) => setSelectedSort(e.target.value)}
+                                        >
+                                            <option value="alphabetical">Alphabetical Customer Name</option>
+                                            <option value="customerId">Customer ID</option>
+                                        </select>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="col-6 col-md-auto">
+                                {selectedApi !== "invoices" && (
+                                    <div className="form-group">
+                                        <label htmlFor="select-validated">Import data with invalid format separately?</label>
+                                        <select
+                                            id="select-validated"
+                                            className="form-control"
+                                            value={selectedValidatedForm}
+                                            onChange={(e) => setSelectedValidatedForm(e.target.value)}
+                                        >
+                                            <option value="1">Yes</option>
+                                            <option value="0">No</option>
+                                        </select>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="col-6 col-md-auto">
+                                <div className="form-group">
+                                    <label htmlFor="select-sample">For test?</label>
+                                    <select
+                                        id="select-sample"
+                                        className="form-control"
+                                        value={selectedSample}
+                                        onChange={(e) => setSelectedSample(e.target.value)}
+                                    >
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div className="form-group mt-3">
-                            <div className={isExporting ? `d-inline-block px-3 py-3 mb-2 bg-warning text-dark` : `d-none`}>
-                                <b>Warning:</b> Do not close the window while exporting... It might take a while.
-                                <span className="d-block"><b>Note:</b> Please allow multiple file download when prompted by the browser.</span>
-                            </div>
+                            { isExporting && (
+                                <div className="d-inline-block px-3 py-3 mb-2 bg-warning text-dark">
+                                    <b>Warning:</b> Do not close the window while exporting... It might take a while.
+                                    <span className="d-block"><b>Note:</b> Please allow multiple file download when prompted by the browser.</span>
+                                </div>
+                            )}
                             <div className="d-block">
                                 <button className="btn btn-primary" type="submit" disabled={isExporting}>
                                     {isExporting ? "Exporting..." : "Export"}
