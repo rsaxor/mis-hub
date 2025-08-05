@@ -13,6 +13,7 @@ import CustomerHistory from "./components/CustomerHistory";
 import CustomerView from "./components/CustomerView";
 import SingleView from "./components/SingleView";
 import Exporter from "./components/Exporter";
+import ExportSalesClient from "./components/ExportSalesClient";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <NavLink to="/mis-shipment" className={({ isActive }) => isActive ? "active" : ""}>Shipment</NavLink>
           <NavLink to="/mis-invoice" className={({ isActive }) => isActive ? "active" : ""}>Invoice</NavLink>
           <NavLink to="/mis-exporter" className={({ isActive }) => isActive ? "active" : ""}>Export</NavLink>
+          <NavLink to="/mis-client-salesrep" className={({ isActive }) => isActive ? "active" : ""}>Client/SalesRep Export</NavLink>
         </nav>
         <Routes>
           <Route path="/mis-customer" element={<CustomerTable />} />
@@ -41,6 +43,7 @@ function App() {
           <Route path="/mis-shipment" element={<ShipmentTable />} />
           <Route path="/mis-invoice" element={<InvoiceTable />} />
           <Route path="/mis-exporter" element={<Exporter />} />
+          <Route path="/mis-client-salesrep" element={<ExportSalesClient />} />
           <Route path="/view/:queryPage/:key" element={<SingleView />} />
         </Routes>
       </div>

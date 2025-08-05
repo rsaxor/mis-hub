@@ -2,29 +2,55 @@ import React, { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import dataExportHandler from "../utils/dataExportHandler"
-
+import { getUserAll } from "../utils/getApiData"
 
 const Exporter = () => {
     const [selectedApi, setSelectedApi] = useState("customers");
     const [selectedFormat, setSelectedFormat] = useState("csv");
     const [selectedValidatedForm, setSelectedValidatedForm] = useState(1);
     const [selectedSort, setSelectedSort] = useState("");
+    const [selectedSalesrep, setSelectedSalesrep] = useState("");
+    const [selectedReport, setSelectedReport] = useState("estimate_by_sales");
+    const [salesReps, setSalesReps] = useState([]);
     const [selectedSample, setSelectedSample] = useState(1);
+    const [selectedDateFrom, setSelectedDateFrom] = useState("");
+    const [selectedDateTo, setSelectedDateTo] = useState("");
     const [isExporting, setIsExporting] = useState(false);
+
+    useEffect(() => {
+        if (selectedApi === "report") {
+            // Fetch sales reps when the "report" option is selected
+            const fetchSalesReps = async () => {
+                try {
+                    const allUser = await getUserAll();
+                    if (allUser) {
+                        setSalesReps(allUser);
+                    }
+                } catch (error) {
+                    console.error("Error fetching sales reps:", error);
+                }
+            };
+            fetchSalesReps();
+
+        } else {
+            setSalesReps([]); // Clear sales reps if not in "report"
+        }
+    }, [selectedApi]);
 
     const handleExport = async (event) => {
         event.preventDefault();
         setIsExporting(true);
         
         try {
-            const { validData, invalidData  } = await dataExportHandler(selectedApi, selectedValidatedForm, selectedSample, selectedSort);
+            const { validData, invalidData  } = await dataExportHandler(selectedApi, selectedValidatedForm, selectedSample, selectedSort, selectedSalesrep, selectedDateFrom, selectedDateTo, selectedReport);
             const timestamp = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 12); // Format: YYYYMMDDHHMM
+            const reportSalesRep = selectedApi === "report" ? `_EmployeeNum_${selectedSalesrep}` : '';
 
             if (validData.length > 0) {
                 if (selectedFormat === "csv") {
-                    exportToCSV(validData, `exported_valid_${selectedApi}_${timestamp}.csv`);
+                    exportToCSV(validData, `exported_valid_${selectedApi}_${timestamp}${reportSalesRep}.csv`);
                 } else if (selectedFormat === "xls") {
-                    exportToExcel(validData, `exported_valid_${selectedApi}_${timestamp}.xlsx`);
+                    exportToExcel(validData, `exported_valid_${selectedApi}_${timestamp}${reportSalesRep}.xlsx`);
                 }
             }
 
@@ -98,9 +124,59 @@ const Exporter = () => {
                                         <option value="customers">Customers</option>
                                         <option value="estimates">Estimates</option>
                                         <option value="invoices">Invoices</option>
+                                        <option value="report">Report</option>
                                     </select>
                                 </div>
                             </div>
+                            {selectedApi === "report" && (
+                                <div className="col-6 col-md-auto">
+                                    <div className="row">
+                                        <div className="col-6 col-md-auto">
+                                            <div className="form-group">
+                                                <label htmlFor="select-salesrep">Select report type</label>
+                                                <select
+                                                    id="select-salesrep"
+                                                    className="form-control"
+                                                    value={selectedReport}
+                                                    onChange={(e) => setSelectedReport(e.target.value)}
+                                                >
+                                                    <option value="estimate_by_sales">Estimate by Sales Person</option>
+                                                    <option value="sales_by_person">Sales by Person (Invoice)</option>
+                                                    <option value="all_customer_contact">Customer Contact List</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="col-6 col-md-auto">
+                                            <div className="form-group">
+                                                <label htmlFor="select-salesrep">Select Sales Rep</label>
+                                                <select
+                                                    id="select-salesrep"
+                                                    className="form-control"
+                                                    value={selectedSalesrep}
+                                                    onChange={(e) => setSelectedSalesrep(e.target.value)}
+                                                >
+                                                    {/* <option value="all">All</option> */}
+                                                    {salesReps.map((rep) => (
+                                                        <option key={rep.UID} value={rep.UID}>
+                                                            {rep.FullName}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        {selectedReport !== "all_customer_contact" && (
+                                            <div className="col-6 col-md-auto">
+                                                <div className="form-group">
+                                                    <label htmlFor="selectDateFrom">Select Date From</label>
+                                                    <input className="d-block mb-2" name="dtFrom" id="selectDateFrom" type="date" value={selectedDateFrom} onChange={(e) => setSelectedDateFrom(e.target.value)}/>
+                                                    <label htmlFor="selectDateTo">Select Date To</label>
+                                                    <input className="d-block" name="dtTo" id="selectDateTo" type="date" value={selectedDateTo}  onChange={(e) => setSelectedDateTo(e.target.value)}/>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                             <div className="col-6 col-md-auto">
                                 <div className="form-group">
                                     <label htmlFor="select-format">Select file format</label>
@@ -115,8 +191,8 @@ const Exporter = () => {
                                     </select>
                                 </div>
                             </div>
-                            <div className="col-6 col-md-auto">
-                                {selectedApi === "customers" && (
+                            {selectedApi === "customers" && (
+                                <div className="col-6 col-md-auto">
                                     <div className="form-group">
                                         <label htmlFor="select-sort">Sort by</label>
                                         <select
@@ -129,10 +205,10 @@ const Exporter = () => {
                                             <option value="customerId">Customer ID</option>
                                         </select>
                                     </div>
-                                )}
-                            </div>
-                            <div className="col-6 col-md-auto">
-                                {selectedApi !== "invoices" && (
+                                </div>
+                            )}
+                            { (selectedApi !== "invoices" && selectedApi !== "report") && (
+                                <div className="col-6 col-md-auto">
                                     <div className="form-group">
                                         <label htmlFor="select-validated">Import data with invalid format separately?</label>
                                         <select
@@ -144,23 +220,25 @@ const Exporter = () => {
                                             <option value="1">Yes</option>
                                             <option value="0">No</option>
                                         </select>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="col-6 col-md-auto">
-                                <div className="form-group">
-                                    <label htmlFor="select-sample">For test?</label>
-                                    <select
-                                        id="select-sample"
-                                        className="form-control"
-                                        value={selectedSample}
-                                        onChange={(e) => setSelectedSample(e.target.value)}
-                                    >
-                                        <option value="1">Yes</option>
-                                        <option value="0">No</option>
-                                    </select>
+                                        </div>
                                 </div>
-                            </div>
+                            )}
+                            { selectedApi !== "report" && (
+                                <div className="col-6 col-md-auto">
+                                    <div className="form-group">
+                                        <label htmlFor="select-sample">For test?</label>
+                                        <select
+                                            id="select-sample"
+                                            className="form-control"
+                                            value={selectedSample}
+                                            onChange={(e) => setSelectedSample(e.target.value)}
+                                        >
+                                            <option value="1">Yes</option>
+                                            <option value="0">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                         <div className="form-group mt-3">
                             { isExporting && (

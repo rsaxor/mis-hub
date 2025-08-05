@@ -63,7 +63,54 @@ export const getUserById = async (userID) => {
     	return match || null;
 		
 	} catch (error) {
-		console.error("Error fetching contact info of customer:", error);
+		console.error("Error fetching user", error);
+		return null; // Return an empty object on failure
+	}
+}
+
+export const getUserAll = async () => {
+	const apiUrlUsers = process.env.REACT_APP_API_USERS
+	try {
+		const config = {
+			method: "get",
+			url: `${apiUrlUsers}`,
+			headers: {
+				"Content-Type": "application/json",
+				[apiKey]: apiValue,
+			},
+		};
+
+		const response = await axios.request(config);
+
+    	return response.data || null;
+		
+	} catch (error) {
+		console.error("Error fetching user", error);
+		return null; // Return an empty object on failure
+	}
+}
+
+export const setSalesReport = async (userId, dtFrom, dtTo) => {
+	const apiService = process.env.REACT_APP_API_SERVICE;
+	//ExportrptEstimateBySalesPersonToExcel
+	//ExportrptSalesByPersonToExcel
+
+	try {
+		const config = {
+			method: "get",
+			url: `${apiService}/api/ReportGrid/ExportrptSalesByPersonToExcel?dtfrom=${dtFrom}&dtTo=${dtTo}%20&SalesPersonFrom=0,${userId}&LoginName=Spectrum&CompanyName=Spectrum%20UAE%20Ltd`,
+			// url: `${apiService}/api/ReportGrid/ExportrptAllCustomerslistToExcel?LoginName=Spectrum&CompanyName=Spectrum%20UAE%20Ltd`,
+			headers: {
+				"Content-Type": "application/json",
+			},
+		};
+
+		const response = await axios.request(config);
+
+		return response.data || null;
+		
+	} catch (error) {
+		console.error("Error fetching user", error);
 		return null; // Return an empty object on failure
 	}
 }
@@ -82,6 +129,10 @@ export const getTotalCount = async (selectedApi) => {
 			url: process.env.REACT_APP_API_INVOICE,
 			query: "/0/1/null/null/null/1/Invoice/1/null/null/null",
 		},
+		history: {
+			url: process.env.REACT_APP_API_HISTORY,
+        	query: "/1/1/null/1/25/1",
+		}
 	};
 
 	// Get the config for the selected API
