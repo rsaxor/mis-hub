@@ -19,11 +19,11 @@ const getApiDetails = (queryPage, searchKeyword, currentPage, itemsPerPage) => {
 
     const apiQueries = {
         "mis-customer": `${apiUrl}/1/1/1/${searchKeyword}/${currentPage}/${itemsPerPage}/1/false`,
-        "mis-estimates": `${apiUrl}/1/1/${searchKeyword}/${currentPage}/${itemsPerPage}/All/All/All/1/null/null/null`,
-        "mis-jobs": `${apiUrl}/1/1/false/JobCode/null/${currentPage}/${itemsPerPage}/1/${searchKeyword}/All/false/null/false/null/null/null`,
+        "mis-estimates": `${apiUrl}/1/1/${searchKeyword}/${currentPage}/${itemsPerPage}/All/All/All/All/1/null/null/null`,
+        "mis-jobs": `${apiUrl}/1/1/false/JobCode/null/${currentPage}/${itemsPerPage}/1/All/${searchKeyword}/All/false/null/false/undefined/undefined/JobProgressDate`,
         "mis-purchases": `${apiUrl}/0/1/${searchKeyword}/${currentPage}/${itemsPerPage}/PO/1/null/null/null`,
         "mis-shipment": `${apiUrl}/0/1/${searchKeyword}/${currentPage}/${itemsPerPage}/1/null/null/null`,
-        "mis-invoice": `${apiUrl}/0/1/${searchKeyword}/null/null/${currentPage}/Invoice/1/null/null/null`
+        "mis-invoice": `${apiUrl}/0/1/${searchKeyword}/null/null/${currentPage}/Invoice/All/1/undefined/undefined/TransactionDate`
     };
 
     return {

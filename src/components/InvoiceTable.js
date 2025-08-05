@@ -25,7 +25,7 @@ const InvoiceTable = () => {
             try {
                 const config = {
                     method: 'get',
-                    url: `${apiUrl}/0/1/null/null/null/${currentPage}/Invoice/1/null/null/null`,
+                    url: `${apiUrl}/0/1/null/null/null/${currentPage}/Invoice/All/1/undefined/undefined/TransactionDate`,
                     headers: {
                         'Content-Type': 'application/json', 
                         [apiKey]: apiValue

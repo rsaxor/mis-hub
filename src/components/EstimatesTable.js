@@ -26,7 +26,7 @@ const EstimatesTable = () => {
             try {
                 const config = {
                     method: 'get',
-                    url: `${apiUrl}/1/1/null/${currentPage}/${itemsPerPage}/All/All/All/1/null/null/null`,
+                    url: `${apiUrl}/1/1/null/${currentPage}/${itemsPerPage}/All/All/All/All/1/null/null/null`,
                     headers: {
                         'Content-Type': 'application/json', 
                         [apiKey]: apiValue

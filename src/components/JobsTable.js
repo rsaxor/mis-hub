@@ -25,7 +25,7 @@ const JobsTable = () => {
             try {
                 const config = {
                     method: 'get',
-                    url: `${apiUrl}/1/1/false/JobCode/null/${currentPage}/${itemsPerPage}/1/null/All/false/null/false/null/null/null`,
+                    url: `${apiUrl}/1/1/false/JobCode/null/${currentPage}/${itemsPerPage}/1/All/null/All/false/null/false/null/null/null`,
                     headers: {
                         'Content-Type': 'application/json', 
                         [apiKey]: apiValue
