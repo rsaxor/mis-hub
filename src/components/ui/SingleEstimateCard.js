@@ -1,51 +1,93 @@
-const SingleEstimateCard = ({result, customerContact, customerData, spectrumRep}) => {
+const SingleEstimateCard = ({ result, customerContact, customerData, spectrumRep }) => {
     return (
         <div className="col-12">
             <h2><b>Estimate: {result.EstimateCode}</b></h2>
             <div className="row">
-                <div className="col-12 col-sm-6 col-lg-4">
-                    <div className="card mb-4">
-                        <div className="card-body">
-                            <h5 className="text-uppercase"><b>Customer Data</b></h5>
-                            <hr></hr>
-                            <div className="row">
-                                <div className="col-md-4">
-                                    <p className=""><b>Name</b></p>
+                <div className="col-12 col-sm-8 col-lg-9">
+                    <div className="row">
+                        <div className="col-6">
+                            <div className="card mb-4">
+                                <div className="card-body">
+                                    <h5 className="text-uppercase"><b>Customer Data</b></h5>
+                                    <hr></hr>
+                                    <div className="row">
+                                        <div className="col-md-4">
+                                            <p className=""><b>Name</b></p>
+                                        </div>
+                                        <div className="col-md-8">
+                                            <p className="mb-2">{customerContact.FullName}</p>
+                                        </div>
+                                        <div className="col-md-4">
+                                            <p className=""><b>Company</b></p>
+                                        </div>
+                                        <div className="col-md-8">
+                                            <p className="mb-2">{customerData[0].CustomerName}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="col-md-8">
-                                    <p className="mb-2">{customerContact.FullName}</p>
+                            </div>
+                        </div>
+                        <div className="col-6">
+                            <div className="card mb-4">
+                                <div className="card-body">
+                                    <h5 className="text-uppercase"><b>Address</b></h5>
+                                    <hr></hr>
+                                    <p className="mb-2">{customerData[0].Address11}</p>
+                                    <p className="mb-2">{customerData[0].Address12}</p>
+                                    <p className="mb-2">{customerData[0].PostCode}</p>
                                 </div>
-                                <div className="col-md-4">
-                                    <p className=""><b>Company</b></p>
+                            </div>
+                        </div>
+                        <div className="col-12">
+                            <div className="card mb-4">
+                                <div className="card-body">
+                                    <h5 className="text-uppercase"><b>Project</b></h5>
+                                    <hr></hr>
+                                    <p className="mb-2">Project Name: {result.EstimateName}</p>
+                                    <p className="mb-2">Subtotal: AED {result.SubTotal}</p>
                                 </div>
-                                <div className="col-md-8">
-                                    <p className="mb-2">{customerData[0].CustomerName}</p>
+                                <div className="card-body">
+                                    <h5 className="text-uppercase"><b>Project Items</b></h5>
+                                    <hr></hr>
+                                    <p className="mb-2">Total Item/s: {result.EstimateItem.length}</p>
+                                    <table className="table">
+                                        <thead>
+                                            <tr>
+                                                <th style={{ width: '30%' }}>Item</th>
+                                                <th style={{ width: '45%' }}>JO</th>
+                                                <th style={{ width: '10%' }}>Qty</th>
+                                                <th style={{ width: '15%' }}>Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        {
+                                            result.EstimateItem.length > 0 ? (
+                                                <tbody>
+                                                    {result.EstimateItem.map(item => (
+                                                        <tr key={item.id}>
+                                                            <td>
+                                                                <p><b>{item.ItemName}</b></p>
+                                                                <p>{item.Description}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p style={{ whiteSpace: 'pre-wrap' }}>{item.InvoiceDesc}</p>
+                                                            </td>
+                                                            <td>{item.EstimateItemPart[0]?.ItemQty1}</td>
+                                                            <td>AED {item.SubTotal}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            ) : (
+                                                <p>No item found.</p>
+                                            )
+                                        }
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
-                <div className="col-12 col-sm-6 col-lg-4">
-                    <div className="card mb-4">
-                        <div className="card-body">
-                            <h5 className="text-uppercase"><b>Project</b></h5>
-                            <hr></hr>
-                            <p className="mb-2">{result.EstimateName}</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-12 col-sm-6 col-lg-4">
-                    <div className="card mb-4">
-                        <div className="card-body">
-                            <h5 className="text-uppercase"><b>Address</b></h5>
-                            <hr></hr>
-                            <p className="mb-2">{customerData[0].Address11}</p>
-                            <p className="mb-2">{customerData[0].Address12}</p>
-                            <p className="mb-2">{customerData[0].PostCode}</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-12 col-sm-6 col-lg-4">
+                <div className="col-12 col-sm-4 col-lg-3">
                     <div className="card mb-4">
                         <div className="card-body">
                             <h5 className="text-uppercase"><b>Internal</b></h5>
