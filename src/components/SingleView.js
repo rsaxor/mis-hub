@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams } from 'react-router-dom';
 import BackButton from "./ui/BackButton";
 import SingleEstimateCard from "./ui/SingleEstimateCard" ;
+import SingleJobCard from "./ui/SingleJobCard" ;
 import { singleViewApis } from "../utils/singleViewApis"
 import { getCustomerContact, getCustomer, getUserById } from "../utils/getApiData"
 
@@ -19,17 +20,20 @@ const ResultCard = ({ result, queryPage }) => {
             return (
                 <SingleEstimateCard
                     result={result}
-                    customerContact={result.customerContact} // Pre-fetched
-                    customerData={result.customerData} // Pre-fetched
-                    spectrumRep={result.spectrumRep} // Pre-fetched
+                    customerContact={result.customerContact}
+                    customerData={result.customerData}
+                    spectrumRep={result.spectrumRep}
                 />
             );
 
         case "mis-jobs":
             return (
-                <div>
-                    <h3>Jobs</h3>
-                </div>
+                <SingleJobCard
+                    result={result}
+                    customerContact={result.customerContact}
+                    customerData={result.customerData}
+                    spectrumRep={result.spectrumRep}
+                />
             );
 
         default:
@@ -77,7 +81,9 @@ const SingleView = () => {
                 const response = await axios.request(config);
 				const result = response.data;
 
-                if (queryPage === 'mis-estimates' && result) {
+                const pageSameApis = ['mis-estimates', 'mis-jobs'];
+
+                if (pageSameApis.includes(queryPage) && result) {
                     const [customerContact, customerData, spectrumRep] = await Promise.all([
                         getCustomerContact(result.CustomerID, result.ContactID),
                         getCustomer(result.CustomerID),

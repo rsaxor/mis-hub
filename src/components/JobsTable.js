@@ -127,7 +127,7 @@ const JobsTable = () => {
                                 {keysToDisplay.map((key, keyIndex) => (
                                     <td key={keyIndex}>{customer[key] ? customer[key] : `---`}</td>
                                 ))}
-                                <td><a className="btn btn-primary btn-sm" href={`/#`}>View</a></td>
+                                <td><a className="btn btn-primary btn-sm" href={`/view/mis-jobs/${customer.EstID}`}>View</a></td>
                             </tr>
                         ))
                     ) : (
