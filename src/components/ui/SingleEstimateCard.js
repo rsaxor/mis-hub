@@ -1,3 +1,5 @@
+import { FormatDate } from "../../utils/formatDate"
+
 const SingleEstimateCard = ({ result, customerContact, customerData, spectrumRep }) => {
     return (
         <div className="col-12">
@@ -92,11 +94,12 @@ const SingleEstimateCard = ({ result, customerContact, customerData, spectrumRep
                         <div className="card-body">
                             <h5 className="text-uppercase"><b>Internal</b></h5>
                             <hr></hr>
-                            <p className="mb-2">Status: {result.ExportStatusID}</p>
-                            <p className="mb-2">Ship: {result.dtShipDate}</p>
-                            <p className="mb-2">Sales Rep: {result.FullName}</p>
-                            <p className="mb-2">PO: {result.OrderReff}</p>
-                            <p className="mb-2">Repeat Job: {result.PreviousJobs}</p>
+                            <p className="mb-2">Estimate Date: <FormatDate date={result?.EstimateDate} /></p>
+                            <p className="mb-2">Revised Date: <FormatDate date={result?.EstimateRevisedDate} /></p>
+                            <p className="mb-2">Status: {result?.ExportStatusID || "---"}</p>
+                            <p className="mb-2">Sales Rep: {spectrumRep?.FullName || "---"}</p>
+                            <p className="mb-2">PO: {result?.OrderReff || "---"}</p>
+                            <p className="mb-2">Repeat Job: {result?.PreviousJobs || "---"}</p>
                         </div>
                     </div>
                 </div>
