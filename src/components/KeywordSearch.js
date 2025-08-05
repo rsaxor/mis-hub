@@ -85,7 +85,13 @@ const SearchResultCard = ({ searchResult, queryPage }) => {
                             <h3 className="card-title mb-0"><b>{searchResult.JobCode}</b></h3>
                             <p className="mb-0"><b>{searchResult.EstName}</b></p>
                             <p className="mb-2">{searchResult.CustomerName}</p>
-                            <p className="card-title mb-0">[Reference estimate code: <b>{searchResult.EstCode}</b>]</p>
+                            <p className="card-title">[Reference estimate code: <b>{searchResult.EstCode}</b>]</p>
+                            <a
+                                className="btn btn-primary d-inline-block"
+                                href={`/view/mis-jobs/${searchResult.EstID}`}
+                            >
+                                View
+                            </a>
                         </div>
                     </div>
                 </div>
