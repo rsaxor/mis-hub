@@ -61,27 +61,27 @@ const SingleEstimateCard = ({ result, customerContact, customerData, spectrumRep
                                                 <th style={{ width: '15%' }}>Subtotal</th>
                                             </tr>
                                         </thead>
-                                        {
-                                            result.EstimateItem.length > 0 ? (
-                                                <tbody>
-                                                    {result.EstimateItem.map(item => (
-                                                        <tr key={item.id}>
-                                                            <td>
-                                                                <p><b>{item.ItemName}</b></p>
-                                                                <p>{item.Description}</p>
-                                                            </td>
-                                                            <td>
-                                                                <p style={{ whiteSpace: 'pre-wrap' }}>{item.InvoiceDesc}</p>
-                                                            </td>
-                                                            <td>{item.EstimateItemPart[0]?.ItemQty1}</td>
-                                                            <td>AED {item.SubTotal}</td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
+                                        <tbody>
+                                            {result.EstimateItem.length > 0 ? (
+                                                result.EstimateItem.map((item, index) => (
+                                                    <tr key={`${item.id}-${index}`}>
+                                                        <td>
+                                                            <p className="mb-1"><b>{item.ItemName || '---'}</b></p>
+                                                            <p className="mb-0">{item.Description || 'No description'}</p>
+                                                        </td>
+                                                        <td>
+                                                            <p style={{ whiteSpace: 'pre-wrap' }} className="mb-0">{item.InvoiceDesc || '---'}</p>
+                                                        </td>
+                                                        <td>{item.EstimateItemPart[0]?.ItemQty1 || 0}</td>
+                                                        <td>AED {item.SubTotal || '0.00'}</td>
+                                                    </tr>
+                                                ))
                                             ) : (
-                                                <p>No item found.</p>
-                                            )
-                                        }
+                                                <tr>
+                                                    <td colSpan="4" className="text-center">No items found.</td>
+                                                </tr>
+                                            )}
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
