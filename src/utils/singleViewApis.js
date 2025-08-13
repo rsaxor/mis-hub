@@ -2,6 +2,7 @@ export const singleViewApis = (queryPage, key) => {
     const baseUrls = {
         "mis-estimates": process.env.REACT_APP_API_ESTIMATEFORJOBPROGRESS,
         "mis-jobs": process.env.REACT_APP_API_ESTIMATEFORJOBPROGRESS, // same with estimate
+        "mis-invoice": process.env.REACT_APP_API_ESTIMATEFORJOBPROGRESS, // same with estimate
     };
 
     const apiUrl = baseUrls[queryPage] || "";
@@ -9,6 +10,7 @@ export const singleViewApis = (queryPage, key) => {
     const apiQueries = {
         "mis-estimates": `${apiUrl}/${key}`,
         "mis-jobs": `${apiUrl}/${key}`,
+        "mis-invoice": `${apiUrl}/${key}`,
     };
 
 	// const columnHeadings = {

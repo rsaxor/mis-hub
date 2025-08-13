@@ -23,7 +23,7 @@ const getApiDetails = (queryPage, searchKeyword, currentPage, itemsPerPage) => {
         "mis-jobs": `${apiUrl}/1/1/false/JobCode/null/${currentPage}/${itemsPerPage}/1/All/${searchKeyword}/All/false/null/false/undefined/undefined/JobProgressDate`,
         "mis-purchases": `${apiUrl}/0/1/${searchKeyword}/${currentPage}/${itemsPerPage}/PO/1/null/null/null`,
         "mis-shipment": `${apiUrl}/0/1/${searchKeyword}/${currentPage}/${itemsPerPage}/1/null/null/null`,
-        "mis-invoice": `${apiUrl}/0/1/${searchKeyword}/null/null/${currentPage}/Invoice/All/1/undefined/undefined/TransactionDate`
+        "mis-invoice": `${apiUrl}/0/1/${searchKeyword}/null/null/${currentPage}/Invoice/All/1/undefined/undefined/TransactionDate/0` // dont apply "/0" after "TransactionDate"
     };
 
     return {
@@ -144,6 +144,12 @@ const SearchResultCard = ({ searchResult, queryPage }) => {
                             <p className="mb-0">Customer name: <b>{searchResult.CustomerName}</b></p>
                             <p className="mb-0">Total: <b>{searchResult.Total}</b></p>
                             <p className="mb-0">Status: <b>{searchResult.InvoiceStatus}</b></p>
+                            <a
+                                className="btn btn-primary d-inline-block mt-3"
+                                href={`/view/mis-invoice/${searchResult.EstID}`}
+                            >
+                                View
+                            </a>
                         </div>
                     </div>
                 </div>

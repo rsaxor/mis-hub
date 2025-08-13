@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import BackButton from "./ui/BackButton";
 import SingleEstimateCard from "./ui/SingleEstimateCard" ;
 import SingleJobCard from "./ui/SingleJobCard" ;
+import SingleInvoiceCard from "./ui/SingleInvoiceCard" ;
 import { singleViewApis } from "../utils/singleViewApis"
 import { getCustomerContact, getCustomer, getUserById } from "../utils/getApiData"
 
@@ -29,6 +30,16 @@ const ResultCard = ({ result, queryPage }) => {
         case "mis-jobs":
             return (
                 <SingleJobCard
+                    result={result}
+                    customerContact={result.customerContact}
+                    customerData={result.customerData}
+                    spectrumRep={result.spectrumRep}
+                />
+            );
+
+        case "mis-invoice":
+            return (
+                <SingleInvoiceCard
                     result={result}
                     customerContact={result.customerContact}
                     customerData={result.customerData}
@@ -81,7 +92,7 @@ const SingleView = () => {
                 const response = await axios.request(config);
 				const result = response.data;
 
-                const pageSameApis = ['mis-estimates', 'mis-jobs'];
+                const pageSameApis = ['mis-estimates', 'mis-jobs', 'mis-invoice'];
 
                 if (pageSameApis.includes(queryPage) && result) {
                     const [customerContact, customerData, spectrumRep] = await Promise.all([
