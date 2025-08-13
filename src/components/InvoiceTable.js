@@ -25,7 +25,7 @@ const InvoiceTable = () => {
             try {
                 const config = {
                     method: 'get',
-                    url: `${apiUrl}/0/1/null/null/null/${currentPage}/Invoice/All/1/undefined/undefined/TransactionDate`,
+                    url: `${apiUrl}/0/1/null/null/null/${currentPage}/Invoice/All/1/undefined/undefined/TransactionDate/0`,
                     headers: {
                         'Content-Type': 'application/json', 
                         [apiKey]: apiValue
@@ -127,7 +127,7 @@ const InvoiceTable = () => {
                                 {keysToDisplay.map((key, keyIndex) => (
                                     <td key={keyIndex}>{customer[key] ? customer[key] : `---`}</td>
                                 ))}
-                                <td><a className="btn btn-primary btn-sm" href={`/mis-customer-view/${customer.CustomerID}`}>View</a></td>
+                                <td><a className="btn btn-primary btn-sm" href={`/view/mis-invoice/${customer.EstID}`}>View</a></td>
                             </tr>
                         ))
                     ) : (
